@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { ChevronRightIcon } from 'lucide-react'
@@ -30,18 +30,25 @@ export default function QuizQuestion({
   const [rawTimeLeft, setRawTimeLeft] = useState<number>(20) // Store fractional seconds for smooth animation
   const [displayTimeLeft, setDisplayTimeLeft] = useState<number>(20) // Store rounded seconds for display
   const [startTime, setStartTime] = useState<number>(Date.now())
+  const timerActiveRef = useRef<boolean>(true); // Track if timer should be active
 
   useEffect(() => {
     const newStartTime = Date.now();
     setStartTime(newStartTime);
     setRawTimeLeft(20)
     setDisplayTimeLeft(20)
+    timerActiveRef.current = true; // Activate timer when question changes
 
     if (answered) return
 
     const duration = 20 * 1000; // 20 seconds in milliseconds
 
+    let animationFrameId: number;
+
     const updateTimer = () => {
+      // Only continue if timer is still active
+      if (!timerActiveRef.current) return;
+      
       const elapsed = Date.now() - newStartTime;
       const remaining = Math.max(0, duration - elapsed);
       const rawSecondsLeft = remaining / 1000;
@@ -55,18 +62,20 @@ export default function QuizQuestion({
 
       if (rawSecondsLeft <= 0) {
         // Automatically move to next question when timer ends
+        timerActiveRef.current = false; // Deactivate timer before moving to next question
         onNextQuestion();
       } else {
-        requestAnimationFrame(updateTimer);
+        animationFrameId = requestAnimationFrame(updateTimer);
       }
     };
 
-    const animationFrame = requestAnimationFrame(updateTimer);
+    animationFrameId = requestAnimationFrame(updateTimer);
 
     return () => {
-      cancelAnimationFrame(animationFrame);
+      cancelAnimationFrame(animationFrameId);
+      timerActiveRef.current = false; // Ensure timer is deactivated when component unmounts
     };
-  }, [answered, question.id, onNextQuestion])
+  }, [answered, question.id, onNextQuestion]) // Remove timerActive from dependency array since it's a ref
 
   const isCorrect = selectedAnswer === question.correctAnswer
   // Calculate time percentage based on actual elapsed time for smoother animation

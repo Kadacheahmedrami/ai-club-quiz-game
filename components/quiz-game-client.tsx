@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import WelcomeScreen from './quiz/welcome-screen'
 import QuizQuestion from './quiz/quiz-question'
 import ResultsScreen from './quiz/results-screen'
+import LoadingSpinner from '@/components/ui/loading-spinner'
 
 export interface Question {
   id: number
@@ -126,11 +127,7 @@ export default function QuizGame({ userId }: QuizGameProps) {
 
   // Show loading state while fetching questions
   if (loading || questions.length === 0) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="text-white text-xl">Loading quiz questions...</div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   return (
