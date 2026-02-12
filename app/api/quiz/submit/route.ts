@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { connectToDatabase } from '@/lib/database'; // Assuming we'll create this
-import QuizResult from '@/models/QuizResult'; // Assuming we'll create this model
-import User from '@/models/User'; // Assuming we'll create this model
+import { db } from '@/lib/db';
+import { quizResults, quizAnswers, users } from '@/lib/schema';
+import { eq } from 'drizzle-orm';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/auth';
 
 interface AnswerSubmission {
-  userId: string;
+  userId: number;
   answers: {
     questionId: number;
     selectedOption: number;
@@ -13,11 +15,21 @@ interface AnswerSubmission {
 
 export async function POST(request: NextRequest) {
   try {
+    // Authenticate user using NextAuth
+    const session = await getServerSession(authOptions);
+    
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body: AnswerSubmission = await request.json();
     const { userId, answers } = body;
 
-    // Connect to database
-    await connectToDatabase();
+    // Ensure the user ID in the session matches the one in the request
+    // Convert session user ID to number for comparison
+    if (Number(session.user?.id) !== userId) {
+      return NextResponse.json({ error: 'Unauthorized: Invalid user ID' }, { status: 401 });
+    }
 
     // Calculate score based on correct answers
     let score = 0;
@@ -54,16 +66,23 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    // Create new quiz result
-    const quizResult = new QuizResult({
-      user: userId,
-      answers,
+    // Insert quiz result
+    const [result] = await db.insert(quizResults).values({
+      userId,
       score,
       totalQuestions,
       date: new Date()
-    });
+    }).returning();
 
-    await quizResult.save();
+    // Insert individual answers
+    const answersToInsert = answers.map(answer => ({
+      resultId: result.id,
+      questionId: answer.questionId,
+      selectedOption: answer.selectedOption,
+      isCorrect: answer.selectedOption === correctAnswers[answer.questionId]
+    }));
+
+    await db.insert(quizAnswers).values(answersToInsert);
 
     return NextResponse.json({ 
       success: true, 
