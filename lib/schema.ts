@@ -2,7 +2,7 @@ import { pgTable, serial, text, integer, timestamp, boolean, primaryKey, index }
 import { type AdapterAccount } from '@auth/core/adapters';
 
 // ============================================
-// NextAuth.js / Auth.js Tables
+// NextAuth.js / Auth.js Tables (DO NOT MODIFY)
 // ============================================
 
 export const users = pgTable('users', {
@@ -11,12 +11,7 @@ export const users = pgTable('users', {
   email: text('email').notNull(),
   emailVerified: timestamp('emailVerified', { mode: 'date' }),
   image: text('image'),
-  // Custom fields for your application
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-}, (table) => ({
-  emailIdx: index('users_email_idx').on(table.email),
-}));
+});
 
 export const accounts = pgTable(
   'accounts',
@@ -39,7 +34,6 @@ export const accounts = pgTable(
     compoundKey: primaryKey({
       columns: [account.provider, account.providerAccountId],
     }),
-    userIdIdx: index('accounts_userId_idx').on(account.userId),
   })
 );
 
@@ -49,9 +43,7 @@ export const sessions = pgTable('sessions', {
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   expires: timestamp('expires', { mode: 'date' }).notNull(),
-}, (table) => ({
-  userIdIdx: index('sessions_userId_idx').on(table.userId),
-}));
+});
 
 export const verificationTokens = pgTable(
   'verification_tokens',
@@ -73,14 +65,11 @@ export const quizResults = pgTable('quiz_results', {
   id: serial('id').primaryKey(),
   userId: text('user_id')
     .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }), // Changed to text to match users.id
+    .references(() => users.id, { onDelete: 'cascade' }),
   score: integer('score').notNull(),
   totalQuestions: integer('total_questions').notNull(),
   date: timestamp('date').defaultNow().notNull(),
-}, (table) => ({
-  userIdIdx: index('quiz_results_userId_idx').on(table.userId),
-  dateIdx: index('quiz_results_date_idx').on(table.date),
-}));
+});
 
 export const quizAnswers = pgTable('quiz_answers', {
   id: serial('id').primaryKey(),
@@ -90,12 +79,10 @@ export const quizAnswers = pgTable('quiz_answers', {
   questionId: integer('question_id').notNull(),
   selectedOption: integer('selected_option').notNull(),
   isCorrect: boolean('is_correct').notNull(),
-}, (table) => ({
-  resultIdIdx: index('quiz_answers_resultId_idx').on(table.resultId),
-}));
+});
 
 // ============================================
-// TypeScript Types for InferModel
+// TypeScript Types
 // ============================================
 
 export type User = typeof users.$inferSelect;
