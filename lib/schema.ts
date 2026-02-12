@@ -1,12 +1,15 @@
-import { pgTable, serial, text, integer, timestamp, boolean, primaryKey, index } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, integer, timestamp, boolean, primaryKey } from 'drizzle-orm/pg-core';
 import { type AdapterAccount } from '@auth/core/adapters';
 
 // ============================================
-// NextAuth.js / Auth.js Tables (DO NOT MODIFY)
+// NextAuth.js / Auth.js Tables
 // ============================================
 
 export const users = pgTable('users', {
-  id: text('id').notNull().primaryKey(),
+  id: text('id')
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   name: text('name'),
   email: text('email').notNull(),
   emailVerified: timestamp('emailVerified', { mode: 'date' }),
