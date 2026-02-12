@@ -13,8 +13,11 @@ interface QuizQuestionProps {
   score: number
   selectedAnswer: number | null
   answered: boolean
+  timeSaved?: number
+  timeRemaining?: number
   onAnswerSelect: (optionIndex: number) => void
   onNextQuestion: () => void
+  onSaveTimerState: (startTime: number, timeRemaining: number) => void
 }
 
 export default function QuizQuestion({
@@ -24,34 +27,58 @@ export default function QuizQuestion({
   score,
   selectedAnswer,
   answered,
+  timeSaved: propTimeSaved,
+  timeRemaining: propTimeRemaining,
   onAnswerSelect,
-  onNextQuestion
+  onNextQuestion,
+  onSaveTimerState
 }: QuizQuestionProps) {
-  const [rawTimeLeft, setRawTimeLeft] = useState<number>(20) // Store fractional seconds for smooth animation
-  const [displayTimeLeft, setDisplayTimeLeft] = useState<number>(20) // Store rounded seconds for display
+  const [rawTimeLeft, setRawTimeLeft] = useState<number>(20) // Start with full time
+  const [displayTimeLeft, setDisplayTimeLeft] = useState<number>(20) // Start with full time
   const [startTime, setStartTime] = useState<number>(Date.now())
   const timerActiveRef = useRef<boolean>(true); // Track if timer should be active
 
   // Effect to handle timer initialization and reset when question changes
   useEffect(() => {
-    // Reset timer when question changes
-    const newStartTime = Date.now();
-    setStartTime(newStartTime);
-    setRawTimeLeft(20);
-    setDisplayTimeLeft(20);
+    // Calculate the actual remaining time based on saved state
+    let initialTimeRemaining = 20; // Default 20 seconds
+    const currentTime = Date.now();
+
+    // If we have saved timer state, calculate the actual remaining time
+    if (propTimeSaved !== undefined && propTimeRemaining !== undefined) {
+      // Calculate how much time has passed since the timer state was saved
+      const timePassedSinceSave = (currentTime - propTimeSaved) / 1000;
+      // Calculate actual remaining time
+      const calculatedTimeLeft = Math.max(0, propTimeRemaining - timePassedSinceSave);
+
+      if (calculatedTimeLeft <= 0) {
+        // If time has already expired since last save, move to next question immediately
+        timerActiveRef.current = false;
+        onNextQuestion();
+        return;
+      }
+
+      // Use the calculated remaining time
+      initialTimeRemaining = calculatedTimeLeft;
+    }
+
+    // Set the initial state based on calculated time
+    setStartTime(currentTime);
+    setRawTimeLeft(initialTimeRemaining);
+    setDisplayTimeLeft(Math.ceil(initialTimeRemaining));
     timerActiveRef.current = true; // Activate timer when question loads
 
-    const duration = 20 * 1000; // 20 seconds in milliseconds
+    const duration = initialTimeRemaining * 1000; // Duration in milliseconds based on remaining time
 
     let animationFrameId: number;
 
     const updateTimer = () => {
       // Only continue if timer is still active
       if (!timerActiveRef.current) return;
-      
-      const elapsed = Date.now() - newStartTime;
-      const remaining = Math.max(0, duration - elapsed);
-      const rawSecondsLeft = remaining / 1000;
+
+      const elapsed = (Date.now() - startTime) / 1000;
+      const remaining = Math.max(0, initialTimeRemaining - elapsed);
+      const rawSecondsLeft = remaining;
 
       setRawTimeLeft(rawSecondsLeft);
       // Update display time only when the integer part changes to avoid flickering
@@ -65,6 +92,8 @@ export default function QuizQuestion({
         timerActiveRef.current = false; // Deactivate timer before moving to next question
         onNextQuestion();
       } else {
+        // Save timer state: save the current time and the remaining time
+        onSaveTimerState(Date.now(), rawSecondsLeft);
         animationFrameId = requestAnimationFrame(updateTimer);
       }
     };
@@ -75,12 +104,11 @@ export default function QuizQuestion({
       cancelAnimationFrame(animationFrameId);
       timerActiveRef.current = false; // Ensure timer is deactivated when component unmounts
     };
-  }, [question.id]); // Only reinitialize when the question ID changes
+  }, [question.id, propTimeSaved, propTimeRemaining, onSaveTimerState]); // Include propTimeSaved and propTimeRemaining in dependencies
 
-  const isCorrect = selectedAnswer === question.correctAnswer
   // Calculate time percentage based on actual elapsed time for smoother animation
   const elapsed = (Date.now() - startTime) / 1000;
-  const timePercentage = Math.max(0, (rawTimeLeft / 20) * 100)
+  const timePercentage = Math.max(0, (rawTimeLeft / 20) * 100) // Always calculate based on 20 seconds per question
   
   // Determine if time is running low for styling
   const isTimeLow = rawTimeLeft <= 5;

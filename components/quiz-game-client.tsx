@@ -5,6 +5,7 @@ import WelcomeScreen from './quiz/welcome-screen'
 import QuizQuestion from './quiz/quiz-question'
 import ResultsScreen from './quiz/results-screen'
 import LoadingSpinner from '@/components/ui/loading-spinner'
+import { saveQuizState, loadQuizState, clearQuizState, QuizState } from '@/lib/quiz-storage'
 
 export interface Question {
   id: number
@@ -30,25 +31,47 @@ export default function QuizGame({ userId }: QuizGameProps) {
   const [answers, setAnswers] = useState<(number | null)[]>([]) // Track selected answer for each question
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false) // New state for submission loading
+  const [timerState, setTimerState] = useState<{timeSaved?: number, timeRemaining?: number}>({});
 
   useEffect(() => {
-    // Fetch questions from backend
-    const fetchQuestions = async () => {
-      try {
-        const response = await fetch('/api/quiz/questions');
-        const data = await response.json();
-        const fetchedQuestions = data.questions;
-        setQuestions(fetchedQuestions);
-        setAnswered(Array(fetchedQuestions.length).fill(false)); // Initialize answered array with correct length
-        setAnswers(Array(fetchedQuestions.length).fill(null)); // Initialize answers array with correct length
-      } catch (error) {
-        console.error('Error fetching questions:', error);
-      } finally {
-        setLoading(false);
+    // Restore state from localStorage if available
+    const savedState = loadQuizState();
+    
+    if (savedState && savedState.questions.length > 0) {
+      // If we have saved state, use it
+      setGameState(savedState.gameState);
+      setCurrentQuestion(savedState.currentQuestion);
+      setScore(savedState.score);
+      setQuestions(savedState.questions);
+      setAnswered(savedState.answered);
+      setAnswers(savedState.answers);
+      // Set timer state if available in saved state
+      if (savedState.timeSaved !== undefined && savedState.timeRemaining !== undefined) {
+        setTimerState({
+          timeSaved: savedState.timeSaved,
+          timeRemaining: savedState.timeRemaining
+        });
       }
-    };
+      setLoading(false);
+    } else {
+      // Otherwise, fetch questions from backend
+      const fetchQuestions = async () => {
+        try {
+          const response = await fetch('/api/quiz/questions');
+          const data = await response.json();
+          const fetchedQuestions = data.questions;
+          setQuestions(fetchedQuestions);
+          setAnswered(Array(fetchedQuestions.length).fill(false)); // Initialize answered array with correct length
+          setAnswers(Array(fetchedQuestions.length).fill(null)); // Initialize answers array with correct length
+        } catch (error) {
+          console.error('Error fetching questions:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
 
-    fetchQuestions();
+      fetchQuestions();
+    }
   }, []);
 
   const handleStartQuiz = () => {
@@ -58,6 +81,17 @@ export default function QuizGame({ userId }: QuizGameProps) {
     setSelectedAnswer(null)
     setAnswered(Array(questions.length).fill(false))
     setAnswers(Array(questions.length).fill(null))
+    setTimerState({})
+    
+    // Save state to localStorage
+    saveQuizState({
+      gameState: 'quiz',
+      currentQuestion: 0,
+      score: 0,
+      questions,
+      answered: Array(questions.length).fill(false),
+      answers: Array(questions.length).fill(null)
+    });
   }
 
   const handleAnswerSelect = (optionIndex: number) => {
@@ -71,6 +105,16 @@ export default function QuizGame({ userId }: QuizGameProps) {
       const newAnswers = [...answers];
       newAnswers[currentQuestion] = optionIndex;
       setAnswers(newAnswers);
+      
+      // Save state to localStorage
+      saveQuizState({
+        gameState,
+        currentQuestion,
+        score,
+        questions,
+        answered,
+        answers: newAnswers
+      });
     }
   }
 
@@ -80,14 +124,37 @@ export default function QuizGame({ userId }: QuizGameProps) {
     newAnswered[currentQuestion] = true;
     setAnswered(newAnswered);
 
+    // Save state to localStorage before proceeding
+    saveQuizState({
+      gameState,
+      currentQuestion,
+      score,
+      questions,
+      answered: newAnswered,
+      answers
+    });
+
     if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1)
+      const nextQuestion = currentQuestion + 1;
+      setCurrentQuestion(nextQuestion);
       // Reset selected answer for the new question
-      setSelectedAnswer(null)
+      setSelectedAnswer(null);
+      // Reset timer state for the new question
+      setTimerState({});
+      
+      // Save state to localStorage after moving to next question
+      saveQuizState({
+        gameState,
+        currentQuestion: nextQuestion,
+        score,
+        questions,
+        answered: newAnswered,
+        answers
+      });
     } else {
       // Set submitting state to show loading screen
       setSubmitting(true);
-      
+
       // Submit results to backend
       console.log('Attempting to submit quiz, questions length:', questions.length); // Debug log
       console.log('All answers:', answers); // Debug log
@@ -101,6 +168,17 @@ export default function QuizGame({ userId }: QuizGameProps) {
           console.error('User not authenticated');
           alert('Please log in to submit the quiz');
           setGameState('results');
+          
+          // Save state to localStorage after setting game state to results
+          saveQuizState({
+            gameState: 'results',
+            currentQuestion,
+            score,
+            questions,
+            answered: newAnswered,
+            answers
+          });
+          
           setSubmitting(false); // Reset submitting state
           return;
         }
@@ -134,6 +212,17 @@ export default function QuizGame({ userId }: QuizGameProps) {
           console.error('Error response:', errorText);
           // Still go to results screen but without scores
           setGameState('results');
+          
+          // Save state to localStorage after setting game state to results
+          saveQuizState({
+            gameState: 'results',
+            currentQuestion,
+            score,
+            questions,
+            answered: newAnswered,
+            answers
+          });
+          
           setSubmitting(false); // Reset submitting state
           return;
         }
@@ -154,11 +243,27 @@ export default function QuizGame({ userId }: QuizGameProps) {
 
       // Move to results screen after attempting submission
       setGameState('results');
+      
+      // Save state to localStorage after setting game state to results
+      saveQuizState({
+        gameState: 'results',
+        currentQuestion,
+        score,
+        questions,
+        answered: newAnswered,
+        answers
+      });
+      
       setSubmitting(false); // Reset submitting state
+      
+      // Clear the quiz state after submission since the quiz is complete
+      clearQuizState();
     }
   }
 
   const handlePlayAgain = () => {
+    clearQuizState(); // Clear the saved state when playing again
+    setTimerState({}); // Clear the timer state
     handleStartQuiz()
   }
 
@@ -192,8 +297,29 @@ export default function QuizGame({ userId }: QuizGameProps) {
             score={score}
             selectedAnswer={answers[currentQuestion] ?? null}
             answered={answered[currentQuestion] || false}
+            timeSaved={timerState.timeSaved}
+            timeRemaining={timerState.timeRemaining}
             onAnswerSelect={handleAnswerSelect}
             onNextQuestion={handleNextQuestion}
+            onSaveTimerState={(startTime, timeRemaining) => {
+              // Update the timer state in the component
+              setTimerState({
+                timeSaved: Date.now(),
+                timeRemaining
+              });
+              
+              // Update the saved state with timer information
+              saveQuizState({
+                gameState,
+                currentQuestion,
+                score,
+                questions,
+                answered,
+                answers,
+                timeSaved: Date.now(),
+                timeRemaining
+              });
+            }}
           />
         )}
         {gameState === 'results' && (
