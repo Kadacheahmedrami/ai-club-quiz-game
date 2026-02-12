@@ -7,9 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:push": "drizzle-kit push:pg",
-    "db:studio": "drizzle-kit studio"
-    
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "seed:quiz": "tsx scripts/seed-quiz-questions.ts"
+
   },
   "dependencies": {
     "@auth/core": "^0.34.3",
