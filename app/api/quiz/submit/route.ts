@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { quizResults, quizAnswers, users, quizQuestions } from '@/lib/schema';
-import { eq, inArray } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { validateAnswers } from '@/lib/quiz-utils';
 
 interface AnswerSubmission {
-  userId: string; // Changed to string to match the users table ID type
+  userId: string | number; // Accept both string and number to handle different client implementations
   answers: {
     questionId: number;
     selectedOption: number;
@@ -26,34 +25,87 @@ export async function POST(request: NextRequest) {
     const body: AnswerSubmission = await request.json();
     const { userId, answers } = body;
 
-    // Ensure the user ID in the session matches the one in the request
-    if (session.user?.id !== userId) {
+    // Verify that the userId in the request matches the authenticated user's ID
+    if (session.user?.id !== userId.toString()) {
       return NextResponse.json({ error: 'Unauthorized: Invalid user ID' }, { status: 401 });
     }
 
-    // Validate answers against the database
-    const validatedAnswers = await validateAnswers(answers);
+    // Use the authenticated user's ID from the session
+    const userIdString = session.user.id;
+    
+    console.log('Authenticated userId:', userIdString);
 
-    // Calculate score based on validated answers
+    console.log('Submitting answers:', answers); // Debug log
+    
+    // Hardcoded test mode - set to true to enable test mode, false to disable
+    const testMode = true; // Change this to false to disable test mode
+    
+    // Total number of questions in the quiz
+    let totalQuestions = answers.length;
+    
+    // If in test mode, only process the first 3 questions (or however many were sent)
+    let filteredAnswers = answers;
+    if (testMode) {
+      // In test mode, we only evaluate the questions that were sent
+      // This means totalQuestions should be the number of questions sent
+      totalQuestions = answers.length;
+    }
+    
+    // Process all answers (including unanswered ones)
     let score = 0;
-    const totalQuestions = validatedAnswers.length;
+    const processedAnswers = [];
 
-    validatedAnswers.forEach(answer => {
-      if (answer.isCorrect) {
-        score++;
+    for (const answer of filteredAnswers) {
+      if (answer.selectedOption === -1) {
+        // Unanswered question - mark as incorrect
+        processedAnswers.push({
+          questionId: answer.questionId,
+          selectedOption: answer.selectedOption,
+          isCorrect: false
+        });
+      } else {
+        // Validate the answered question
+        const question = await db.select({
+          correctAnswerIndex: quizQuestions.correctAnswerIndex
+        }).from(quizQuestions).where(eq(quizQuestions.id, answer.questionId)).limit(1);
+        
+        if (question.length > 0) {
+          const isCorrect = answer.selectedOption === question[0].correctAnswerIndex;
+          if (isCorrect) {
+            score++;
+          }
+          
+          processedAnswers.push({
+            questionId: answer.questionId,
+            selectedOption: answer.selectedOption,
+            isCorrect
+          });
+        } else {
+          // Question not found in database - mark as incorrect
+          processedAnswers.push({
+            questionId: answer.questionId,
+            selectedOption: answer.selectedOption,
+            isCorrect: false
+          });
+        }
       }
-    });
+    }
+    
+    console.log('Processed answers:', processedAnswers); // Debug log
+    console.log('Calculated score:', score); // Debug log
+    console.log('Total questions:', totalQuestions); // Debug log
+    console.log('Test mode:', testMode); // Debug log
 
     // Insert quiz result
     const [result] = await db.insert(quizResults).values({
-      userId,
+      userId: userIdString,
       score,
       totalQuestions,
       date: new Date()
     }).returning();
 
     // Insert individual answers
-    const answersToInsert = validatedAnswers.map(answer => ({
+    const answersToInsert = processedAnswers.map(answer => ({
       resultId: result.id,
       questionId: answer.questionId,
       selectedOption: answer.selectedOption,

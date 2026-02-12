@@ -83,6 +83,7 @@ export default function ResultsScreen({
             </div>
           </div>
 
+
           {/* Tagline */}
           <p className="text-gray-300 mb-8">
             Welcome to <span className="text-cyan-400 font-semibold">Bejaia School of AI</span>

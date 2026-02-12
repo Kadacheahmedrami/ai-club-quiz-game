@@ -13,7 +13,7 @@ const LoadingSpinner: FC = () => {
             alt="Loading..."
             width={256}
             height={256}
-            className="object-cover w-full invert h-full"
+            className="object-cover scale-150 w-full invert h-full"
           />
         </div>
       </div>

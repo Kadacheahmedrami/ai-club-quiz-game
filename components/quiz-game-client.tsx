@@ -78,45 +78,75 @@ export default function QuizGame({ userId }: QuizGameProps) {
     const newAnswered = [...answered];
     newAnswered[currentQuestion] = true;
     setAnswered(newAnswered);
-    
+
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1)
       // Reset selected answer for the new question
       setSelectedAnswer(null)
     } else {
       // Submit results to backend
-      if (userId) {
-        try {
-          // Submit all questions with their selected answers
-          const submissionData = questions.map((q, index) => ({
-            questionId: q.id,
-            selectedOption: answers[index] !== null ? answers[index] : -1 // -1 for unanswered (timed out), actual selection if answered
-          }));
-
-          // Get session to access the token
-          const sessionResponse = await fetch('/api/auth/session');
-          const session = await sessionResponse.json();
-
-          const response = await fetch('/api/quiz/submit', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              userId,
-              answers: submissionData
-            }),
-          });
-
-          const result = await response.json();
-          if (result.success) {
-            console.log('Quiz submitted successfully');
-          }
-        } catch (error) {
-          console.error('Error submitting quiz:', error);
+      console.log('Attempting to submit quiz, questions length:', questions.length); // Debug log
+      console.log('All answers:', answers); // Debug log
+      
+      try {
+        // Get the authenticated user ID from the session
+        const sessionResponse = await fetch('/api/auth/session');
+        const session = await sessionResponse.json();
+        
+        if (!session || !session.user?.id) {
+          console.error('User not authenticated');
+          alert('Please log in to submit the quiz');
+          setGameState('results');
+          return;
         }
+        
+        const authenticatedUserId = session.user.id;
+        console.log('Using authenticated userId:', authenticatedUserId); // Debug log
+
+        // Submit all questions with their selected answers
+        const submissionData = questions.map((q, index) => ({
+          questionId: q.id,
+          selectedOption: answers[index] !== null ? answers[index] : -1 // -1 for unanswered (timed out), actual selection if answered
+        }));
+
+        console.log('Submission data:', submissionData); // Debug log
+        
+        const response = await fetch('/api/quiz/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: authenticatedUserId,
+            answers: submissionData
+          }),
+        });
+
+        console.log('Response status:', response.status); // Debug log
+        if (!response.ok) {
+          console.error('Submission failed with status:', response.status);
+          const errorText = await response.text();
+          console.error('Error response:', errorText);
+          // Still go to results screen but without scores
+          setGameState('results');
+          return;
+        }
+        
+        const result = await response.json();
+        console.log('Submission result:', result); // Debug log
+        
+        if (result.success) {
+          console.log('Quiz submitted successfully');
+          setScore(result.score); // Update score in case it's different
+        } else {
+          console.error('Submission failed:', result);
+        }
+      } catch (error) {
+        console.error('Error submitting quiz:', error);
+        // Still go to results screen but without scores
       }
 
+      // Move to results screen after attempting submission
       setGameState('results')
     }
   }

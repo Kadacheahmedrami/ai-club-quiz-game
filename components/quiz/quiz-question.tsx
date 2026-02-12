@@ -32,14 +32,14 @@ export default function QuizQuestion({
   const [startTime, setStartTime] = useState<number>(Date.now())
   const timerActiveRef = useRef<boolean>(true); // Track if timer should be active
 
+  // Effect to handle timer initialization and reset when question changes
   useEffect(() => {
+    // Reset timer when question changes
     const newStartTime = Date.now();
     setStartTime(newStartTime);
-    setRawTimeLeft(20)
-    setDisplayTimeLeft(20)
-    timerActiveRef.current = true; // Activate timer when question changes
-
-    if (answered) return
+    setRawTimeLeft(20);
+    setDisplayTimeLeft(20);
+    timerActiveRef.current = true; // Activate timer when question loads
 
     const duration = 20 * 1000; // 20 seconds in milliseconds
 
@@ -75,7 +75,7 @@ export default function QuizQuestion({
       cancelAnimationFrame(animationFrameId);
       timerActiveRef.current = false; // Ensure timer is deactivated when component unmounts
     };
-  }, [answered, question.id, onNextQuestion]) // Remove timerActive from dependency array since it's a ref
+  }, [question.id]); // Only reinitialize when the question ID changes
 
   const isCorrect = selectedAnswer === question.correctAnswer
   // Calculate time percentage based on actual elapsed time for smoother animation
@@ -99,7 +99,7 @@ export default function QuizQuestion({
           </div>
           <div className="text-right">
             <p className="text-sm text-gray-400">Score</p>
-            <p className="text-2xl font-bold text-cyan-400">{score} / {totalQuestions}</p>
+            <p className="text-2xl font-bold text-cyan-400"> ? / {totalQuestions}</p>
           </div>
         </div>
 
