@@ -29,6 +29,7 @@ export default function QuizGame({ userId }: QuizGameProps) {
   const [answered, setAnswered] = useState<boolean[]>(Array(0).fill(false)) // Initialize with empty array
   const [answers, setAnswers] = useState<(number | null)[]>([]) // Track selected answer for each question
   const [loading, setLoading] = useState(true)
+  const [submitting, setSubmitting] = useState(false) // New state for submission loading
 
   useEffect(() => {
     // Fetch questions from backend
@@ -84,22 +85,26 @@ export default function QuizGame({ userId }: QuizGameProps) {
       // Reset selected answer for the new question
       setSelectedAnswer(null)
     } else {
+      // Set submitting state to show loading screen
+      setSubmitting(true);
+      
       // Submit results to backend
       console.log('Attempting to submit quiz, questions length:', questions.length); // Debug log
       console.log('All answers:', answers); // Debug log
-      
+
       try {
         // Get the authenticated user ID from the session
         const sessionResponse = await fetch('/api/auth/session');
         const session = await sessionResponse.json();
-        
+
         if (!session || !session.user?.id) {
           console.error('User not authenticated');
           alert('Please log in to submit the quiz');
           setGameState('results');
+          setSubmitting(false); // Reset submitting state
           return;
         }
-        
+
         const authenticatedUserId = session.user.id;
         console.log('Using authenticated userId:', authenticatedUserId); // Debug log
 
@@ -110,7 +115,7 @@ export default function QuizGame({ userId }: QuizGameProps) {
         }));
 
         console.log('Submission data:', submissionData); // Debug log
-        
+
         const response = await fetch('/api/quiz/submit', {
           method: 'POST',
           headers: {
@@ -129,12 +134,13 @@ export default function QuizGame({ userId }: QuizGameProps) {
           console.error('Error response:', errorText);
           // Still go to results screen but without scores
           setGameState('results');
+          setSubmitting(false); // Reset submitting state
           return;
         }
-        
+
         const result = await response.json();
         console.log('Submission result:', result); // Debug log
-        
+
         if (result.success) {
           console.log('Quiz submitted successfully');
           setScore(result.score); // Update score in case it's different
@@ -147,7 +153,8 @@ export default function QuizGame({ userId }: QuizGameProps) {
       }
 
       // Move to results screen after attempting submission
-      setGameState('results')
+      setGameState('results');
+      setSubmitting(false); // Reset submitting state
     }
   }
 
@@ -169,10 +176,11 @@ export default function QuizGame({ userId }: QuizGameProps) {
         className="absolute inset-0 w-full h-full object-cover md:translate-y-0 -translate-y-1/4 "
       />
 
- 
+      {/* Show loading spinner when submitting */}
+      {submitting && <LoadingSpinner />}
 
       {/* Content */}
-      <div className="relative z-10">
+      <div className={`${submitting ? 'opacity-0 pointer-events-none' : ''} relative z-10`}>
         {gameState === 'welcome' && (
           <WelcomeScreen onStartQuiz={handleStartQuiz} />
         )}
