@@ -18,6 +18,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^3.9.1
         version: 3.10.0(react-hook-form@7.68.0(react@19.2.3))
+      '@neondatabase/serverless':
+        specifier: ^1.0.2
+        version: 1.0.2
       '@radix-ui/react-accordion':
         specifier: 1.2.2
         version: 1.2.2(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -119,7 +122,7 @@ importers:
         version: 4.1.0
       drizzle-orm:
         specifier: ^0.45.1
-        version: 0.45.1(pg@8.18.0)(postgres@3.4.8)
+        version: 0.45.1(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(pg@8.18.0)(postgres@3.4.8)
       embla-carousel-react:
         specifier: 8.5.1
         version: 8.5.1(react@19.2.3)
@@ -736,6 +739,10 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@neondatabase/serverless@1.0.2':
+    resolution: {integrity: sha512-I5sbpSIAHiB+b6UttofhrN/UJXII+4tZPAq1qugzwCwLIL8EZLV7F/JyHUrEIiGgQpEXzpnjlJ+zwcEhheGvCw==}
+    engines: {node: '>=19.0.0'}
 
   '@next/env@16.1.6':
     resolution: {integrity: sha512-N1ySLuZjnAtN3kFnwhAwPvZah8RJxKasD7x1f8shFqhncnWZn4JMfg37diLNuoHsLAlrDfM3g4mawVdtAG8XLQ==}
@@ -1745,6 +1752,9 @@ packages:
 
   '@types/node@22.19.3':
     resolution: {integrity: sha512-1N9SBnWYOJTrNZCdh/yJE+t910Y128BoyY+zBLWhL3r0TYzlTmFdXrPwHL9DyFZmlEXNQQolTZh3KHV31QDhyA==}
+
+  '@types/pg@8.16.0':
+    resolution: {integrity: sha512-RmhMd/wD+CF8Dfo+cVIy3RR5cl8CyfXQ0tGgW6XBL8L4LM/UTEbNXYRbLwU6w+CgrKBNbrQWt4FUtTfaU5jSYQ==}
 
   '@types/react-dom@19.2.3':
     resolution: {integrity: sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ==}
@@ -3415,6 +3425,11 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
+  '@neondatabase/serverless@1.0.2':
+    dependencies:
+      '@types/node': 22.19.3
+      '@types/pg': 8.16.0
+
   '@next/env@16.1.6': {}
 
   '@next/swc-darwin-arm64@16.1.6':
@@ -4386,6 +4401,12 @@ snapshots:
     dependencies:
       undici-types: 6.21.0
 
+  '@types/pg@8.16.0':
+    dependencies:
+      '@types/node': 22.19.3
+      pg-protocol: 1.11.0
+      pg-types: 2.2.0
+
   '@types/react-dom@19.2.3(@types/react@19.2.7)':
     dependencies:
       '@types/react': 19.2.7
@@ -4596,8 +4617,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.45.1(pg@8.18.0)(postgres@3.4.8):
+  drizzle-orm@0.45.1(@neondatabase/serverless@1.0.2)(@types/pg@8.16.0)(pg@8.18.0)(postgres@3.4.8):
     optionalDependencies:
+      '@neondatabase/serverless': 1.0.2
+      '@types/pg': 8.16.0
       pg: 8.18.0
       postgres: 3.4.8
 

@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 import { quizResults, quizAnswers, users } from '@/lib/schema';
 import { eq } from 'drizzle-orm';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/auth';
+import { authOptions } from '@/lib/auth';
 
 interface AnswerSubmission {
   userId: number;

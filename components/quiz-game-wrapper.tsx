@@ -1,5 +1,5 @@
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/auth';
+import { authOptions } from '@/lib/auth';
 import QuizGameClient from './quiz-game-client';
 
 export default async function QuizGameWrapper() {

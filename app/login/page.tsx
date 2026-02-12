@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/auth';
+import { authOptions } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
 export default async function Login() {

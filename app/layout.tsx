@@ -1,5 +1,5 @@
 import React from "react"
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 
 import './globals.css'
@@ -11,13 +11,14 @@ export const metadata: Metadata = {
   title: 'AI Club Quiz | Bejaia School of AI',
   description: 'Welcome to the Bejaia School of AI Club! Test your knowledge about Artificial Intelligence with our interactive quiz game. Think Deeper • Do Better',
   generator: 'v0.app',
-  themeColor: '#1e293b',
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    userScalable: false,
-  },
 }
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  userScalable: false,
+  themeColor: '#1e293b',
+};
 
 export default function RootLayout({
   children,

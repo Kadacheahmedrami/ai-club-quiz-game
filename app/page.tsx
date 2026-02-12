@@ -1,7 +1,7 @@
 import QuizGame from '@/components/quiz-game-wrapper';
 import Navbar from '@/components/navbar';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/auth';
+import { authOptions } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
 export default async function Page() {
