@@ -27,30 +27,54 @@ export default function QuizQuestion({
   onAnswerSelect,
   onNextQuestion
 }: QuizQuestionProps) {
-  const [timeLeft, setTimeLeft] = useState(20)
+  const [rawTimeLeft, setRawTimeLeft] = useState<number>(20) // Store fractional seconds for smooth animation
+  const [displayTimeLeft, setDisplayTimeLeft] = useState<number>(20) // Store rounded seconds for display
+  const [startTime, setStartTime] = useState<number>(Date.now())
 
   useEffect(() => {
-    setTimeLeft(20)
-  }, [question.id])
+    const newStartTime = Date.now();
+    setStartTime(newStartTime);
+    setRawTimeLeft(20)
+    setDisplayTimeLeft(20)
 
-  useEffect(() => {
     if (answered) return
 
-    const interval = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval)
-          return 0
-        }
-        return prev - 1
-      })
-    }, 1000)
+    const duration = 20 * 1000; // 20 seconds in milliseconds
 
-    return () => clearInterval(interval)
-  }, [answered, question.id])
+    const updateTimer = () => {
+      const elapsed = Date.now() - newStartTime;
+      const remaining = Math.max(0, duration - elapsed);
+      const rawSecondsLeft = remaining / 1000;
+
+      setRawTimeLeft(rawSecondsLeft);
+      // Update display time only when the integer part changes to avoid flickering
+      setDisplayTimeLeft(prev => {
+        const newDisplayTime = Math.ceil(rawSecondsLeft);
+        return newDisplayTime !== Math.ceil(prev) ? newDisplayTime : prev;
+      });
+
+      if (rawSecondsLeft <= 0) {
+        // Automatically move to next question when timer ends
+        onNextQuestion();
+      } else {
+        requestAnimationFrame(updateTimer);
+      }
+    };
+
+    const animationFrame = requestAnimationFrame(updateTimer);
+
+    return () => {
+      cancelAnimationFrame(animationFrame);
+    };
+  }, [answered, question.id, onNextQuestion])
 
   const isCorrect = selectedAnswer === question.correctAnswer
-  const timePercentage = (timeLeft / 20) * 100
+  // Calculate time percentage based on actual elapsed time for smoother animation
+  const elapsed = (Date.now() - startTime) / 1000;
+  const timePercentage = Math.max(0, (rawTimeLeft / 20) * 100)
+  
+  // Determine if time is running low for styling
+  const isTimeLow = rawTimeLeft <= 5;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8">
@@ -86,14 +110,14 @@ export default function QuizQuestion({
         <div className="mb-8">
           <div className="flex justify-between items-center mb-2">
             <span className="text-xs text-gray-400">Time Remaining</span>
-            <span className={`text-xs font-bold ${timeLeft <= 5 ? 'text-red-400' : 'text-cyan-400'}`}>
-              {timeLeft}s
+            <span className={`text-xs font-bold ${isTimeLow ? 'text-red-400' : 'text-cyan-400'}`}>
+              {displayTimeLeft}s
             </span>
           </div>
           <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
             <div
-              className={`h-full transition-all duration-1000 ${
-                timeLeft <= 5
+              className={`h-full ${
+                isTimeLow
                   ? 'bg-gradient-to-r from-red-500 to-red-400'
                   : 'bg-gradient-to-r from-cyan-500 to-blue-500'
               }`}
@@ -125,10 +149,8 @@ export default function QuizQuestion({
                 <button
                   key={index}
                   onClick={() => onAnswerSelect(index)}
-                  disabled={answered}
-                  className={`w-full p-4 text-left border rounded-xl transition-all duration-300 flex items-center justify-between group ${buttonStyle} ${
-                    answered ? 'cursor-default' : 'cursor-pointer'
-                  }`}
+                  disabled={false} // Allow changing answers until moving to next question
+                  className={`w-full p-4 text-left border rounded-xl transition-all duration-300 flex items-center justify-between group ${buttonStyle} cursor-pointer`}
                 >
                   <div className="flex items-center gap-4">
                     <span className="text-lg font-bold text-gray-400 group-hover:text-cyan-400 transition-colors">
@@ -143,7 +165,7 @@ export default function QuizQuestion({
         </div>
 
         {/* Next Button */}
-        {answered && (
+        {selectedAnswer !== null && (
           <Button
             onClick={onNextQuestion}
             className="w-full py-6 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-slate-950 font-bold text-lg rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 animate-in fade-in slide-in-from-bottom-4 duration-500"

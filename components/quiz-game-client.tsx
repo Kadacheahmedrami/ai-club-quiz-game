@@ -226,8 +226,9 @@ export default function QuizGame({ userId }: QuizGameProps) {
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [score, setScore] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
-  const [answered, setAnswered] = useState(false)
   const [questions, setQuestions] = useState<Question[]>([])
+  const [answered, setAnswered] = useState<boolean[]>(Array(0).fill(false)) // Initialize with empty array
+  const [answers, setAnswers] = useState<(number | null)[]>([]) // Track selected answer for each question
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -236,7 +237,10 @@ export default function QuizGame({ userId }: QuizGameProps) {
       try {
         const response = await fetch('/api/quiz/questions');
         const data = await response.json();
-        setQuestions(data.questions);
+        const fetchedQuestions = data.questions;
+        setQuestions(fetchedQuestions);
+        setAnswered(Array(fetchedQuestions.length).fill(false)); // Initialize answered array with correct length
+        setAnswers(Array(fetchedQuestions.length).fill(null)); // Initialize answers array with correct length
       } catch (error) {
         console.error('Error fetching questions:', error);
       } finally {
@@ -252,38 +256,55 @@ export default function QuizGame({ userId }: QuizGameProps) {
     setCurrentQuestion(0)
     setScore(0)
     setSelectedAnswer(null)
-    setAnswered(false)
+    setAnswered(Array(questions.length).fill(false))
+    setAnswers(Array(questions.length).fill(null))
   }
 
   const handleAnswerSelect = (optionIndex: number) => {
-    if (answered) return
-
-    setSelectedAnswer(optionIndex)
-    setAnswered(true)
-
-    if (optionIndex === questions[currentQuestion]?.correctAnswer) {
-      setScore(score + 1)
+    // Allow changing the answer if clicking a different option
+    if (selectedAnswer !== optionIndex) {
+      // If previously answered correctly, adjust the score
+      if (selectedAnswer === questions[currentQuestion]?.correctAnswer && optionIndex !== questions[currentQuestion]?.correctAnswer) {
+        setScore(score - 1); // Remove the previous correct answer from score
+      } 
+      // If changing from incorrect to correct answer, increase score
+      else if (selectedAnswer !== questions[currentQuestion]?.correctAnswer && optionIndex === questions[currentQuestion]?.correctAnswer) {
+        setScore(score + 1); // Add the correct answer to score
+      }
+      
+      setSelectedAnswer(optionIndex);
+      
+      // Update the answers array for the current question
+      const newAnswers = [...answers];
+      newAnswers[currentQuestion] = optionIndex;
+      setAnswers(newAnswers);
     }
   }
 
   const handleNextQuestion = async () => {
+    // Mark the current question as answered before proceeding
+    const newAnswered = [...answered];
+    newAnswered[currentQuestion] = true;
+    setAnswered(newAnswered);
+    
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1)
+      // Reset selected answer for the new question
       setSelectedAnswer(null)
-      setAnswered(false)
     } else {
       // Submit results to backend
       if (userId) {
         try {
-          const answers = questions.map((q, index) => ({
+          // Submit all questions with their selected answers
+          const submissionData = questions.map((q, index) => ({
             questionId: q.id,
-            selectedOption: index === currentQuestion ? selectedAnswer : -1 // -1 for unanswered
-          })).filter(a => a.selectedOption !== -1); // Only include answered questions
+            selectedOption: answers[index] !== null ? answers[index] : -1 // -1 for unanswered (timed out), actual selection if answered
+          }));
 
           // Get session to access the token
           const sessionResponse = await fetch('/api/auth/session');
           const session = await sessionResponse.json();
-          
+
           const response = await fetch('/api/quiz/submit', {
             method: 'POST',
             headers: {
@@ -291,7 +312,7 @@ export default function QuizGame({ userId }: QuizGameProps) {
             },
             body: JSON.stringify({
               userId,
-              answers
+              answers: submissionData
             }),
           });
 
@@ -303,7 +324,7 @@ export default function QuizGame({ userId }: QuizGameProps) {
           console.error('Error submitting quiz:', error);
         }
       }
-      
+
       setGameState('results')
     }
   }
@@ -325,18 +346,12 @@ export default function QuizGame({ userId }: QuizGameProps) {
     <div className="relative min-h-screen overflow-hidden">
       {/* GIF background */}
       <img
-        src="/gojo-bg.gif"
+        src="/bg.webp"
         alt="background"
-        className="absolute inset-0 w-full h-full object-cover brightness-[20%] hue-rotate-180"
+        className="absolute inset-0 w-full h-full object-cover md:translate-y-0 -translate-y-1/4 "
       />
 
-      {/* Animated background gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-950/60 via-red-950/50 to-slate-950/60">
-        <div className="absolute inset-0 opacity-25">
-          <div className="absolute top-0 -right-40 w-80 h-80 bg-red-500 rounded-full mix-blend-screen filter blur-3xl animate-pulse" />
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-screen filter blur-3xl animate-pulse" />
-        </div>
-      </div>
+ 
 
       {/* Content */}
       <div className="relative z-10">
@@ -349,8 +364,8 @@ export default function QuizGame({ userId }: QuizGameProps) {
             questionNumber={currentQuestion + 1}
             totalQuestions={questions.length}
             score={score}
-            selectedAnswer={selectedAnswer}
-            answered={answered}
+            selectedAnswer={answers[currentQuestion] ?? null}
+            answered={answered[currentQuestion] || false}
             onAnswerSelect={handleAnswerSelect}
             onNextQuestion={handleNextQuestion}
           />
