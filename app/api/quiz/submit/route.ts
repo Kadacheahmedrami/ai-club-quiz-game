@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { quizResults, quizAnswers, users, quizQuestions } from '@/lib/schema';
+import { quizResults, users, quizQuestions } from '@/lib/schema';
 import { eq } from 'drizzle-orm';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
@@ -96,23 +96,13 @@ export async function POST(request: NextRequest) {
     console.log('Total questions:', totalQuestions); // Debug log
     console.log('Test mode:', testMode); // Debug log
 
-    // Insert quiz result
+    // Insert quiz result only (no individual answers stored)
     const [result] = await db.insert(quizResults).values({
       userId: userIdString,
       score,
       totalQuestions,
       date: new Date()
     }).returning();
-
-    // Insert individual answers
-    const answersToInsert = processedAnswers.map(answer => ({
-      resultId: result.id,
-      questionId: answer.questionId,
-      selectedOption: answer.selectedOption,
-      isCorrect: answer.isCorrect
-    }));
-
-    await db.insert(quizAnswers).values(answersToInsert);
 
     return NextResponse.json({
       success: true,

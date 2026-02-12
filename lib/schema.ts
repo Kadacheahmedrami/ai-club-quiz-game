@@ -85,17 +85,7 @@ export const quizQuestions = pgTable('quiz_questions', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
-export const quizAnswers = pgTable('quiz_answers', {
-  id: serial('id').primaryKey(),
-  resultId: integer('result_id')
-    .notNull()
-    .references(() => quizResults.id, { onDelete: 'cascade' }),
-  questionId: integer('question_id')
-    .notNull()
-    .references(() => quizQuestions.id, { onDelete: 'cascade' }), // Add reference to quiz questions
-  selectedOption: integer('selected_option').notNull(),
-  isCorrect: boolean('is_correct').notNull(),
-});
+// Removed quizAnswers table as per requirement - only storing results, not individual answers
 
 // ============================================
 // TypeScript Types
@@ -116,5 +106,4 @@ export type NewQuizQuestion = typeof quizQuestions.$inferInsert;
 export type QuizResult = typeof quizResults.$inferSelect;
 export type NewQuizResult = typeof quizResults.$inferInsert;
 
-export type QuizAnswer = typeof quizAnswers.$inferSelect;
-export type NewQuizAnswer = typeof quizAnswers.$inferInsert;
+// Removed QuizAnswer types as per requirement - only storing results, not individual answers

@@ -15,6 +15,13 @@
       "when": 1770913937654,
       "tag": "0001_add-quiz-questions-table",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1770923907904,
+      "tag": "0002_remove-quiz-answers-table",
+      "breakpoints": true
     }
   ]
 }
