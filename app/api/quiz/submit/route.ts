@@ -45,8 +45,10 @@ export async function POST(request: NextRequest) {
       .limit(1);
 
     if (existingResult.length > 0) {
-      return NextResponse.json({ 
-        error: 'User has already taken the quiz' 
+      // User has already taken the quiz, return an error
+      return NextResponse.json({
+        error: 'User has already taken the quiz and cannot submit again',
+        alreadyTaken: true
       }, { status: 400 });
     }
 

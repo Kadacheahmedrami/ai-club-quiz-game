@@ -11,14 +11,14 @@ export default function middleware(req: NextRequest) {
   ];
 
   // Check if the current path matches any protected route
-  const isProtectedRoute = protectedPaths.some(path => 
+  const isProtectedRoute = protectedPaths.some(path =>
     req.nextUrl.pathname.startsWith(path)
   );
 
   // If it's a protected route, check authentication
   if (isProtectedRoute) {
     // Use NextAuth's getToken helper to check if user is authenticated
-    const token = req.cookies.get('__Secure-next-auth.session-token') || 
+    const token = req.cookies.get('__Secure-next-auth.session-token') ||
                   req.cookies.get('next-auth.session-token');
 
     if (!token) {
@@ -35,6 +35,22 @@ export default function middleware(req: NextRequest) {
         url.search = `callbackUrl=${encodeURIComponent(req.nextUrl.pathname)}`;
         return NextResponse.redirect(url);
       }
+    }
+  }
+
+  // Check if user is trying to access the quiz page
+  if (req.nextUrl.pathname === '/quiz') {
+    // For page routes, we can't check the database here, so we'll let the page handle it
+    // But we still need to ensure the user is authenticated
+    const token = req.cookies.get('__Secure-next-auth.session-token') ||
+                  req.cookies.get('next-auth.session-token');
+
+    if (!token) {
+      // Redirect to login page for page routes
+      const url = req.nextUrl.clone();
+      url.pathname = '/login';
+      url.search = `callbackUrl=${encodeURIComponent(req.nextUrl.pathname)}`;
+      return NextResponse.redirect(url);
     }
   }
 

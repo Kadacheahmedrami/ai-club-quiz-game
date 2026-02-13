@@ -9,14 +9,12 @@ interface ResultsScreenProps {
   score: number
   totalQuestions: number
   onPlayAgain: () => void
-  onCloseQuiz?: () => void  // Optional prop to close the quiz
 }
 
 export default function ResultsScreen({
   score,
   totalQuestions,
   onPlayAgain,
-  onCloseQuiz
 }: ResultsScreenProps) {
   const router = useRouter();
   const [showCopied, setShowCopied] = useState(false)
@@ -47,14 +45,6 @@ export default function ResultsScreen({
     })
   }
 
-  const handleCloseQuiz = () => {
-    if (onCloseQuiz) {
-      onCloseQuiz();
-    } else {
-      // Fallback navigation if no onCloseQuiz handler is provided
-      window.location.href = '/';
-    }
-  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8">
@@ -115,13 +105,7 @@ export default function ResultsScreen({
 
           {/* Action Buttons */}
           <div className="space-y-3">
-            <Button
-              onClick={handlePlayAgain}
-              className="w-full py-6 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-slate-950 font-bold text-lg rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shadow-lg"
-            >
-              <RotateCcwIcon size={24} />
-              Try Again
-            </Button>
+      
             <Button
               onClick={handleShare}
               className="w-full py-6 bg-slate-700 hover:bg-slate-600 text-white font-bold text-lg rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
@@ -129,13 +113,7 @@ export default function ResultsScreen({
               <ShareIcon size={24} />
               {showCopied ? 'Copied!' : 'Share Result'}
             </Button>
-            <Button
-              onClick={handleCloseQuiz}
-              variant="outline"
-              className="w-full py-6 border-cyan-500 text-cyan-500 hover:bg-cyan-500/10 font-bold text-lg rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95"
-            >
-              Close Quiz
-            </Button>
+        
           </div>
 
           {/* Footer */}

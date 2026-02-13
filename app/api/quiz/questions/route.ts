@@ -3,6 +3,9 @@ import { getAllQuizQuestionsForClient } from '@/lib/quiz-utils';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { TEST_MODE } from '../test';
+import { db } from '@/lib/db';
+import { quizResults } from '@/lib/schema';
+import { eq } from 'drizzle-orm';
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,6 +14,19 @@ export async function GET(request: NextRequest) {
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Check if the user has already taken the quiz
+    const existingResult = await db.select()
+      .from(quizResults)
+      .where(eq(quizResults.userId, session.user.id))
+      .limit(1);
+
+    if (existingResult.length > 0) {
+      return NextResponse.json({ 
+        error: 'User has already taken the quiz', 
+        alreadyTaken: true 
+      }, { status: 400 });
     }
 
     // Fetch all quiz questions from the database for client use (already without correct answers)

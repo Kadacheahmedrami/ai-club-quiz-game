@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { ChevronRightIcon } from 'lucide-react'
-import type { Question } from '../quiz-game'
+import type { Question } from '@/components/quiz-game-client'
 
 interface QuizQuestionProps {
   question: Question
@@ -173,7 +173,7 @@ export default function QuizQuestion({
 
           {/* Answer Options */}
           <div className="space-y-4">
-            {question.options.map((option, index) => {
+            {question.options.map((option: string, index: number) => {
               const isSelected = selectedAnswer === index
               let buttonStyle =
                 'border-cyan-500/30 hover:border-cyan-500/60 hover:bg-slate-700/30'

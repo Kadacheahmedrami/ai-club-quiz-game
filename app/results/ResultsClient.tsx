@@ -3,6 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import ResultsScreen from '@/components/quiz/results-screen';
+import LoadingSpinner from '@/components/ui/loading-spinner';
+import { clearQuizState } from '@/lib/quiz-storage';
 
 interface ResultsClientProps {
   userId: string | undefined;
@@ -25,30 +27,42 @@ export default function ResultsClient({ userId }: ResultsClientProps) {
             if (result.exists) {
               setScore(result.score);
               setTotalQuestions(result.totalQuestions);
+            } else {
+              // If user hasn't taken the quiz, clear any local storage and redirect to the quiz page
+              clearQuizState(); // Clear any local storage that might indicate the quiz was completed
+              router.push('/quiz');
+              return;
             }
+          } else {
+            // If there's an error fetching results, clear local storage and redirect to quiz
+            clearQuizState(); // Clear any local storage that might indicate the quiz was completed
+            router.push('/quiz');
+            return;
           }
         } catch (error) {
           console.error('Error fetching quiz results:', error);
+          // On error, clear local storage and redirect to quiz page
+          clearQuizState(); // Clear any local storage that might indicate the quiz was completed
+          router.push('/quiz');
+          return;
         } finally {
           setLoading(false);
         }
       };
 
       fetchResults();
+    } else {
+      // If no userId, redirect to login
+      router.push('/login');
     }
-  }, [userId]);
+  }, [userId, router]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-2xl text-white">Loading results...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   const handlePlayAgain = () => {
+    clearQuizState(); // Clear any local storage when playing again
     router.push('/quiz');
   };
 
@@ -58,11 +72,10 @@ export default function ResultsClient({ userId }: ResultsClientProps) {
 
   return (
     <div className="min-h-screen bg-black">
-      <ResultsScreen 
-        score={score} 
-        totalQuestions={totalQuestions} 
+      <ResultsScreen
+        score={score}
+        totalQuestions={totalQuestions}
         onPlayAgain={handlePlayAgain}
-        onCloseQuiz={handleCloseQuiz}
       />
     </div>
   );

@@ -44,7 +44,6 @@ export default function MainClient({ userId }: MainClientProps) {
   const handleRetakeQuiz = () => {
     // In the current implementation, we don't allow retaking the quiz
     // But we could implement this differently if needed
-    alert('You have already taken the quiz. Your results are available on the results page.');
     router.push('/results');
   };
 

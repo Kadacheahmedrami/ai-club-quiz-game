@@ -1,4 +1,4 @@
-import { pgTable, serial, text, integer, timestamp, boolean, primaryKey, index } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, integer, timestamp, boolean, primaryKey } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 import { type AdapterAccount } from '@auth/core/adapters';
 
@@ -54,10 +54,10 @@ export const verificationTokens = pgTable(
   {
     identifier: text('identifier').notNull(),
     token: text('token').notNull(),
-    expires: timestamp('expires', { mode: 'date' }).notNull(),
   },
   (vt) => ({
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
+  expires: timestamp('expires', { mode: 'date' }).notNull(),
   })
 );
 
@@ -73,11 +73,6 @@ export const quizResults = pgTable('quiz_results', {
   score: integer('score').notNull(),
   totalQuestions: integer('total_questions').notNull(),
   date: timestamp('date').defaultNow().notNull(),
-}, (table) => {
-  return {
-    userIdIdx: index('quiz_results_user_id_idx').on(table.userId),
-    dateIdx: index('quiz_results_date_idx').on(table.date),
-  };
 });
 
 export const quizQuestions = pgTable('quiz_questions', {
@@ -89,10 +84,6 @@ export const quizQuestions = pgTable('quiz_questions', {
   option4: text('option4').notNull(),
   correctAnswerIndex: integer('correct_answer_index').notNull(), // 0-3 for the four options
   createdAt: timestamp('created_at').defaultNow().notNull(),
-}, (table) => {
-  return {
-    idIdx: index('quiz_questions_id_idx').on(table.id),
-  };
 });
 
 // Removed quizAnswers table as per requirement - only storing results, not individual answers

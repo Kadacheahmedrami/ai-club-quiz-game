@@ -67,7 +67,7 @@ export default function WelcomeScreen({ onStartQuiz,  hasTakenQuiz = false }: We
             className="w-full py-6 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-slate-950 font-bold text-lg rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shadow-lg"
           >
             <PlayIcon size={24} />
-            {hasTakenQuiz ? 'Review Quiz' : 'Start Quiz'}
+            {hasTakenQuiz ? 'View result' : 'Start Quiz'}
           </Button>
           
     
