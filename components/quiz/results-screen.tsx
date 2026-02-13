@@ -48,25 +48,25 @@ export default function ResultsScreen({
 
 const getMessage = (percentage: number) => {
   if (percentage === 100)
-    return "“Throughout Heaven and Earth, I alone am the honored one.” — Satoru Gojo";
+    return "“Throughout Heaven and Earth, I alone am the honored one.” ";
   if (percentage >= 95)
-    return "“Fool… weaklings are better off dead. Stand proud, you are strong!” — Ryomen Sukuna";
+    return "“Fool… weaklings are better off dead. Stand proud, you are strong!”";
   if (percentage >= 90)
-    return "“I don’t fight because I hate people. I fight because I love my life.” — Toji Fushiguro";
+    return "“I don’t fight because I hate people. I fight because I love my life.”";
   if (percentage >= 85)
-    return "“Humans… I’ll reshape you as I please.” — Mahito";
+    return "“Humans… I’ll reshape you as I please.” ";
   if (percentage >= 80)
-    return "“I’m not gonna regret the way I live!” — Yuji Itadori";
+    return "“I’m not gonna regret the way I live!” ";
   if (percentage >= 70)
-    return "“I can’t save everyone… but I can save the people I can.” — Megumi Fushiguro";
+    return "“I can’t save everyone… but I can save the people I can.” ";
   if (percentage >= 60)
-    return "“It’s just a job. I do it for the money.” — Kento Nanami";
+    return "“It’s just a job. I do it for the money.” ";
   if (percentage >= 50)
-    return "“I’m Nobara Kugisaki. Don’t you forget it!” — Nobara Kugisaki";
+    return "“I’m Nobara Kugisaki. Don’t you forget it!” ";
   if (percentage >= 40)
-    return "“I’ll surpass everyone, curse or no curse.” — Maki Zenin";
+    return "“I’ll surpass everyone, curse or no curse.” ";
   if (percentage >= 30)
-    return "“I’m Panda. Don’t underestimate me.” — Panda";
+    return "“I’m Panda. Don’t underestimate me.” ";
   return "Keep training… the Jujutsu path awaits you!";
 };
 
@@ -108,7 +108,7 @@ const handleShare = () => {
           </div>
 
           {/* Results Text */}
-          {userName && <p className="text-xl text-cyan-300 mb-2">Hello, {userName}!</p>}
+          {userName && <p className="text-2xl font-bold text-cyan-300 mb-2"> {userName}!</p>}
           <p className=" text-xl font-semibold mb-6">{getMessage(percentage)}</p>
 
           {/* Score Details */}
@@ -134,7 +134,7 @@ const handleShare = () => {
 
           {/* Tagline */}
           <p className="text-gray-300 mb-8">
-            Welcome to <span className="text-cyan-400 font-semibold">Jujutsu High</span>
+            Welcome to <span className="text-cyan-400 font-semibold">School of jujutsu</span>
             <br />
             <span className="text-sm">Master Cursed Energy • Protect Humanity</span>
           </p>

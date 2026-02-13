@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation';
+import MainClient from './MainClient';
 
-export default function HomePage() {
-  redirect('/main');
+export default function MainPage() {
+  return <MainClient />;
 }

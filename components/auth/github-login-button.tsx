@@ -5,7 +5,7 @@ import { signIn } from 'next-auth/react';
 
 export default function GithubLoginButton() {
   const handleGithubSignIn = () => {
-    signIn('github', { callbackUrl: '/main' });
+    signIn('github', { callbackUrl: '/quiz' });
   };
 
   return (

@@ -75,7 +75,7 @@ export default function ResultsClient({ user }: ResultsClientProps) {
   };
 
   const handleCloseQuiz = () => {
-    router.push('/main');
+    router.push('/');
   };
 
   return (

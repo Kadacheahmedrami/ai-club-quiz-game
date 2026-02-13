@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation';
 import QuizQuestion from './quiz/quiz-question'
 import ResultsScreen from './quiz/results-screen'
@@ -21,24 +21,32 @@ type QuizGameProps = {
 
 export default function QuizGame({ userId }: QuizGameProps) {
   const router = useRouter();
-  
+
   // Initialize state from localStorage if available
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [score, setScore] = useState(0)
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [questions, setQuestions] = useState<Question[]>([])
-  const [answered, setAnswered] = useState<boolean[]>(Array(0).fill(false)) // Initialize with empty array
+  const [answered, setAnswered] = useState<boolean[]>([]) // Initialize with empty array
   const [answers, setAnswers] = useState<(number | null)[]>([]) // Track selected answer for each question
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false) // New state for submission loading
   const [timerState, setTimerState] = useState<{timeSaved?: number, timeRemaining?: number}>({});
+  
+  // Flag to prevent re-initialization after submission starts
+  const submissionStartedRef = useRef(false);
 
   useEffect(() => {
+    // Prevent re-execution if submission has already started
+    if (submissionStartedRef.current) {
+      return;
+    }
+
     // First, check the database to see if the user has already taken the quiz
     const checkDatabaseStatus = async () => {
       try {
         const response = await fetch(`/api/quiz/result/${userId}`);
-        
+
         if (response.ok) {
           const result = await response.json();
           if (result.exists) {
@@ -88,7 +96,7 @@ export default function QuizGame({ userId }: QuizGameProps) {
         const verifyResult = async () => {
           try {
             const response = await fetch(`/api/quiz/result/${userId}`);
-            
+
             if (response.ok) {
               const result = await response.json();
               if (!result.exists) {
@@ -195,7 +203,7 @@ export default function QuizGame({ userId }: QuizGameProps) {
       const newAnswers = [...answers];
       newAnswers[currentQuestion] = optionIndex;
       setAnswers(newAnswers);
-      
+
       // Save the updated state to localStorage
       saveQuizState({
         gameState: 'quiz',
@@ -211,6 +219,15 @@ export default function QuizGame({ userId }: QuizGameProps) {
   }
 
   const handleNextQuestion = async () => {
+    // Update the answers array with the currently selected answer before proceeding
+    const newAnswers = [...answers];
+    if (selectedAnswer !== null) {
+      newAnswers[currentQuestion] = selectedAnswer; // Use the selected answer
+    } else {
+      newAnswers[currentQuestion] = -1; // Mark as unanswered if no selection was made
+    }
+    setAnswers(newAnswers);
+
     // Mark the current question as answered before proceeding
     const newAnswered = [...answered];
     newAnswered[currentQuestion] = true;
@@ -231,7 +248,7 @@ export default function QuizGame({ userId }: QuizGameProps) {
         score,
         questions,
         answered: newAnswered,
-        answers,
+        answers: newAnswers,
         timeSaved: undefined,
         timeRemaining: undefined
       });
@@ -243,12 +260,15 @@ export default function QuizGame({ userId }: QuizGameProps) {
       clearQuizState();
       console.log('Local storage cleared before submission'); // Debug log
 
+      // Set the submission started flag to prevent re-initialization
+      submissionStartedRef.current = true;
+      
       // Set submitting state to show loading screen
       setSubmitting(true);
 
       // Submit results to backend
       console.log('Attempting to submit quiz, questions length:', questions.length); // Debug log
-      console.log('All answers:', answers); // Debug log
+      console.log('All answers:', newAnswers); // Debug log
 
       try {
         // Use the userId passed as a prop
@@ -265,7 +285,7 @@ export default function QuizGame({ userId }: QuizGameProps) {
         // Submit all questions with their selected answers
         const submissionData = questions.map((q, index) => ({
           questionId: q.id,
-          selectedOption: answers[index] !== null ? answers[index] : -1 // -1 for unanswered (timed out), actual selection if answered
+          selectedOption: newAnswers[index] !== null ? newAnswers[index] : -1 // -1 for unanswered (timed out), actual selection if answered
         }));
 
         console.log('Submission data:', submissionData); // Debug log
@@ -284,7 +304,12 @@ export default function QuizGame({ userId }: QuizGameProps) {
         console.log('Response status:', response.status); // Debug log
         if (!response.ok) {
           console.error('Submission failed with status:', response.status);
-          const errorData = await response.json();
+          let errorData = {};
+          try {
+            errorData = await response.json();
+          } catch (parseError) {
+            console.error('Could not parse error response:', parseError);
+          }
           console.error('Error response:', errorData);
 
           // Check if the error is due to user already taking the quiz
@@ -318,6 +343,139 @@ export default function QuizGame({ userId }: QuizGameProps) {
 
       // Navigate to the results page immediately
       router.push('/results');
+    }
+  }
+
+  const handleTimerEnd = async () => {
+    // Prevent multiple submissions
+    if (submitting) return;
+
+    // When timer ends, check if the user had already selected an answer
+    // If they did, use that answer; otherwise, mark as unanswered (-1)
+    const newAnswers = [...answers];
+    
+    // Use the currently selected answer if available, otherwise mark as unanswered
+    if (selectedAnswer !== null) {
+      newAnswers[currentQuestion] = selectedAnswer; // Use the selected answer
+    } else {
+      newAnswers[currentQuestion] = -1; // Mark as unanswered
+    }
+    setAnswers(newAnswers);
+
+    // Mark the current question as answered
+    const newAnswered = [...answered];
+    newAnswered[currentQuestion] = true;
+    setAnswered(newAnswered);
+
+    // If this is the last question, submit the quiz automatically
+    if (currentQuestion === questions.length - 1) {
+      // Clear the quiz state before submitting to prevent any issues
+      clearQuizState();
+      console.log('Local storage cleared before submission'); // Debug log
+
+      // Set the submission started flag to prevent re-initialization
+      submissionStartedRef.current = true;
+      
+      // Set submitting state to show loading screen
+      setSubmitting(true);
+
+      // Submit results to backend
+      console.log('Attempting to submit quiz after timer ended, questions length:', questions.length); // Debug log
+      console.log('All answers:', newAnswers); // Debug log
+
+      try {
+        // Use the userId passed as a prop
+        if (!userId) {
+          console.error('User not authenticated');
+          alert('Please log in to submit the quiz');
+          setSubmitting(false); // Reset submitting state
+          return;
+        }
+
+        const authenticatedUserId = userId;
+        console.log('Using authenticated userId:', authenticatedUserId); // Debug log
+
+        // Submit all questions with their selected answers
+        const submissionData = questions.map((q, index) => ({
+          questionId: q.id,
+          selectedOption: newAnswers[index] !== null ? newAnswers[index] : -1 // -1 for unanswered (timed out), actual selection if answered
+        }));
+
+        console.log('Submission data:', submissionData); // Debug log
+
+        const response = await fetch('/api/quiz/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: authenticatedUserId,
+            answers: submissionData
+          }),
+        });
+
+        console.log('Response status:', response.status); // Debug log
+        if (!response.ok) {
+          console.error('Submission failed with status:', response.status);
+          let errorData = {};
+          try {
+            errorData = await response.json();
+          } catch (parseError) {
+            console.error('Could not parse error response:', parseError);
+          }
+          console.error('Error response:', errorData);
+
+          // Check if the error is due to user already taking the quiz
+          if (response.status === 400 && errorData.alreadyTaken) {
+            // User has already taken the quiz, clear local storage and redirect to results page
+            clearQuizState(); // Clear any local state that might cause resubmission
+            setSubmitting(false); // Reset submitting state
+            router.push('/results');
+            return;
+          }
+
+          setSubmitting(false); // Reset submitting state
+          return;
+        }
+
+        const result = await response.json();
+        console.log('Submission result:', result); // Debug log
+
+        if (result.success) {
+          console.log('Quiz submitted successfully after timer ended');
+          setScore(result.score); // Update score in case it's different
+        } else {
+          console.error('Submission failed:', result);
+        }
+      } catch (error) {
+        console.error('Error submitting quiz after timer ended:', error);
+      }
+
+      // Always reset submitting state regardless of success/failure
+      setSubmitting(false);
+
+      // Navigate to the results page immediately
+      router.push('/results');
+    } else {
+      // If it's not the last question, move to the next question
+      const nextQuestion = currentQuestion + 1;
+      setCurrentQuestion(nextQuestion);
+      // Reset selected answer for the new question
+      setSelectedAnswer(null);
+      // Reset timer state for the new question
+      setTimerState({});
+
+      // Save the updated state to localStorage
+      saveQuizState({
+        gameState: 'quiz',
+        currentQuestion: nextQuestion,
+        score,
+        questions,
+        answered: newAnswered,
+        answers: newAnswers,
+        timeSaved: undefined,
+        timeRemaining: undefined
+      });
     }
   }
 
@@ -358,6 +516,7 @@ export default function QuizGame({ userId }: QuizGameProps) {
             timeRemaining={timerState.timeRemaining}
             onAnswerSelect={handleAnswerSelect}
             onNextQuestion={handleNextQuestion}
+            onTimerEnd={handleTimerEnd}
             onSaveTimerState={(startTime, timeRemaining) => {
               // Update the timer state in the component
               const newTimerState = {

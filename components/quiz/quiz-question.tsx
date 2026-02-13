@@ -17,6 +17,7 @@ interface QuizQuestionProps {
   timeRemaining?: number
   onAnswerSelect: (optionIndex: number) => void
   onNextQuestion: () => void
+  onTimerEnd: () => void // New prop for when timer ends
   onSaveTimerState: (startTime: number, timeRemaining: number) => void
 }
 
@@ -31,15 +32,20 @@ export default function QuizQuestion({
   timeRemaining: propTimeRemaining,
   onAnswerSelect,
   onNextQuestion,
+  onTimerEnd, // Added new prop
   onSaveTimerState
 }: QuizQuestionProps) {
   const [rawTimeLeft, setRawTimeLeft] = useState<number>(20) // Start with full time
   const [displayTimeLeft, setDisplayTimeLeft] = useState<number>(20) // Start with full time
   const [startTime, setStartTime] = useState<number>(Date.now())
   const timerActiveRef = useRef<boolean>(true); // Track if timer should be active
+  const timerEndedRef = useRef<boolean>(false); // Track if timer has already ended
 
   // Effect to handle timer initialization and reset when question changes
   useEffect(() => {
+    // Reset the timer ended flag when the question changes
+    timerEndedRef.current = false;
+    
     // Calculate the actual remaining time based on saved state
     let initialTimeRemaining = 20; // Default 20 seconds
     const currentTime = Date.now();
@@ -53,8 +59,12 @@ export default function QuizQuestion({
 
       if (calculatedTimeLeft <= 0) {
         // If time has already expired since last save, move to next question immediately
-        timerActiveRef.current = false;
-        onNextQuestion();
+        // Only call onTimerEnd if it hasn't been called yet
+        if (!timerEndedRef.current) {
+          timerEndedRef.current = true;
+          timerActiveRef.current = false;
+          onTimerEnd(); // Call onTimerEnd instead of onNextQuestion
+        }
         return;
       }
 
@@ -88,9 +98,13 @@ export default function QuizQuestion({
       });
 
       if (rawSecondsLeft <= 0) {
-        // Automatically move to next question when timer ends
-        timerActiveRef.current = false; // Deactivate timer before moving to next question
-        onNextQuestion();
+        // Only call onTimerEnd if it hasn't been called yet
+        if (!timerEndedRef.current) {
+          timerEndedRef.current = true;
+          // Automatically move to next question when timer ends
+          timerActiveRef.current = false; // Deactivate timer before moving to next question
+          onTimerEnd(); // Call onTimerEnd instead of onNextQuestion
+        }
       } else {
         // Save timer state: save the current time and the remaining time
         onSaveTimerState(Date.now(), rawSecondsLeft);
@@ -104,12 +118,12 @@ export default function QuizQuestion({
       cancelAnimationFrame(animationFrameId);
       timerActiveRef.current = false; // Ensure timer is deactivated when component unmounts
     };
-  }, [question.id, propTimeSaved, propTimeRemaining, onSaveTimerState]); // Include propTimeSaved and propTimeRemaining in dependencies
+  }, [question.id, propTimeSaved, propTimeRemaining, onSaveTimerState, onTimerEnd]); // Include onTimerEnd in dependencies
 
   // Calculate time percentage based on actual elapsed time for smoother animation
   const elapsed = (Date.now() - startTime) / 1000;
   const timePercentage = Math.max(0, (rawTimeLeft / 20) * 100) // Always calculate based on 20 seconds per question
-  
+
   // Determine if time is running low for styling
   const isTimeLow = rawTimeLeft <= 5;
 

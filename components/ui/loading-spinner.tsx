@@ -3,7 +3,7 @@ import { FC } from 'react';
 
 const LoadingSpinner: FC = () => {
   return (
-    <div className="relative min-h-screen bg-black overflow-hidden">
+    <div className="relative  bg-black overflow-hidden">
 
       {/* Loading spinner centered */}
       <div className="relative z-10 flex justify-center items-center h-screen">

@@ -25,7 +25,7 @@ export default async function QuizPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen ">
       <QuizGameClient userId={session.user?.id as string} />
     </div>
   );
