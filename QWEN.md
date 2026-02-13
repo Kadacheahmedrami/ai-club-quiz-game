@@ -12,6 +12,7 @@ The AI Club Quiz Game is a Next.js 16 application designed for the Bejaia School
 - Responsive design with animated transitions
 - Database integration with PostgreSQL using Drizzle ORM
 - Test mode for development purposes
+- Encrypted API communication for enhanced security
 
 ### Technologies Used
 - **Framework**: Next.js 16 (App Router)
@@ -147,6 +148,11 @@ pnpm start
 2. **Quiz Interface**: Displays questions with multiple-choice options
 3. **Results Screen**: Shows the user's score and allows replaying
 
+### Security Features
+- **API Encryption**: All communication between frontend and backend is encrypted using XOR-based obfuscation
+- **Data Validation**: Strict validation of all incoming data to prevent injection attacks
+- **Secure Transmission**: Request and response data is encrypted before transmission
+
 ### State Management
 - Quiz state (current question, answers, score) is managed in `QuizGameClient` component
 - LocalStorage is used to persist quiz progress in case of interruption
@@ -167,13 +173,35 @@ pnpm start
 - **Purpose**: Fetches quiz questions for the authenticated user
 - **Authentication**: Required
 - **Response**: Array of questions without correct answers (to prevent cheating)
+- **Encryption**: Response data is encrypted using XOR-based obfuscation
 
 ### `/api/quiz/submit`
 - **Method**: POST
 - **Purpose**: Submits user answers and calculates score
 - **Authentication**: Required
-- **Request Body**: Object containing userId and array of answers
+- **Request Body**: Object containing encrypted userId and array of answers
 - **Response**: Success status, score, and total questions
+- **Encryption**: Both request and response data are encrypted using XOR-based obfuscation
+- **Validation**: Incoming data is validated for proper structure and content
+
+## Encryption Implementation
+
+The application implements multiple layers of security for API communication:
+
+### Client-Side Encryption
+- Requests to `/api/quiz/submit` are encrypted before transmission
+- Responses from `/api/quiz/questions` are decrypted after reception
+- Uses `SimpleEncryption` class with XOR-based obfuscation
+
+### Server-Side Encryption
+- Responses from `/api/quiz/questions` are encrypted before sending
+- Requests to `/api/quiz/submit` are decrypted upon arrival
+- Uses `SimpleEncryption` class with XOR-based obfuscation
+
+### Data Validation
+- All incoming data is validated using `APIValidator` class
+- Checks for proper structure, data types, and value ranges
+- Prevents injection attacks and malformed requests
 
 ## Troubleshooting
 

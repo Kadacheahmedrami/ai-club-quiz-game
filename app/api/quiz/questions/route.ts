@@ -6,6 +6,7 @@ import { TEST_MODE } from '../test';
 import { db } from '@/lib/db';
 import { quizResults } from '@/lib/schema';
 import { eq } from 'drizzle-orm';
+import { SimpleEncryption } from '@/lib/encryption-utils';
 
 export async function GET(request: NextRequest) {
   try {
@@ -42,7 +43,10 @@ export async function GET(request: NextRequest) {
       questions = shuffled.slice(0, 3);
     }
 
-    return NextResponse.json({ questions, testMode });
+    // Encrypt the questions before sending
+    const encryptedQuestions = SimpleEncryption.encrypt(JSON.stringify({ questions, testMode }));
+    
+    return NextResponse.json({ data: encryptedQuestions });
   } catch (error) {
     console.error('Error fetching quiz questions:', error);
     return NextResponse.json({ error: 'Failed to fetch quiz questions' }, { status: 500 });

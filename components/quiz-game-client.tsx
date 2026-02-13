@@ -42,6 +42,7 @@ export default function QuizGame({ userId }: QuizGameProps) {
       return;
     }
 
+
     // First, check the database to see if the user has already taken the quiz
     const checkDatabaseStatus = async () => {
       try {
@@ -123,10 +124,33 @@ export default function QuizGame({ userId }: QuizGameProps) {
                     }
 
                     const data = await response.json();
-                    const fetchedQuestions = data.questions;
-                    setQuestions(fetchedQuestions);
-                    setAnswered(Array(fetchedQuestions.length).fill(false)); // Initialize answered array with correct length
-                    setAnswers(Array(fetchedQuestions.length).fill(null)); // Initialize answers array with correct length
+                    
+                    // Decrypt the response
+                    if (data.data) {
+                      try {
+                        const { SimpleEncryption } = await import('../lib/encryption-utils');
+                        const decryptedData = SimpleEncryption.decrypt(data.data);
+                        const parsedData = JSON.parse(decryptedData);
+                        
+                        const fetchedQuestions = parsedData.questions;
+                        setQuestions(fetchedQuestions);
+                        setAnswered(Array(fetchedQuestions.length).fill(false)); // Initialize answered array with correct length
+                        setAnswers(Array(fetchedQuestions.length).fill(null)); // Initialize answers array with correct length
+                      } catch (error) {
+                        console.error('Error decrypting questions:', error);
+                        // Fallback to unencrypted data if decryption fails
+                        const fetchedQuestions = data.questions || [];
+                        setQuestions(fetchedQuestions);
+                        setAnswered(Array(fetchedQuestions.length).fill(false)); // Initialize answered array with correct length
+                        setAnswers(Array(fetchedQuestions.length).fill(null)); // Initialize answers array with correct length
+                      }
+                    } else {
+                      // Handle unencrypted data for backward compatibility
+                      const fetchedQuestions = data.questions || [];
+                      setQuestions(fetchedQuestions);
+                      setAnswered(Array(fetchedQuestions.length).fill(false)); // Initialize answered array with correct length
+                      setAnswers(Array(fetchedQuestions.length).fill(null)); // Initialize answers array with correct length
+                    }
                   } catch (error) {
                     console.error('Error fetching questions:', error);
                   } finally {
@@ -173,10 +197,24 @@ export default function QuizGame({ userId }: QuizGameProps) {
             }
 
             const data = await response.json();
-            const fetchedQuestions = data.questions;
-            setQuestions(fetchedQuestions);
-            setAnswered(Array(fetchedQuestions.length).fill(false)); // Initialize answered array with correct length
-            setAnswers(Array(fetchedQuestions.length).fill(null)); // Initialize answers array with correct length
+            
+            // Decrypt the response
+            if (data.data) {
+              const { BrowserEncryption } = await import('../lib/encryption-utils');
+              const decryptedData = await BrowserEncryption.decrypt(data.data);
+              const parsedData = JSON.parse(decryptedData);
+
+              const fetchedQuestions = parsedData.questions;
+              setQuestions(fetchedQuestions);
+              setAnswered(Array(fetchedQuestions.length).fill(false)); // Initialize answered array with correct length
+              setAnswers(Array(fetchedQuestions.length).fill(null)); // Initialize answers array with correct length
+            } else {
+              // Handle unencrypted data for backward compatibility
+              const fetchedQuestions = data.questions;
+              setQuestions(fetchedQuestions);
+              setAnswered(Array(fetchedQuestions.length).fill(false)); // Initialize answered array with correct length
+              setAnswers(Array(fetchedQuestions.length).fill(null)); // Initialize answers array with correct length
+            }
           } catch (error) {
             console.error('Error fetching questions:', error);
           } finally {
@@ -282,13 +320,50 @@ export default function QuizGame({ userId }: QuizGameProps) {
         const authenticatedUserId = userId;
         console.log('Using authenticated userId:', authenticatedUserId); // Debug log
 
-        // Submit all questions with their selected answers
+        // Prepare submission data
         const submissionData = questions.map((q, index) => ({
           questionId: q.id,
           selectedOption: newAnswers[index] !== null ? newAnswers[index] : -1 // -1 for unanswered (timed out), actual selection if answered
         }));
 
-        console.log('Submission data:', submissionData); // Debug log
+        // Encrypt the submission data
+        let encryptedData;
+        try {
+          const { SimpleEncryption } = await import('../lib/encryption-utils');
+          encryptedData = SimpleEncryption.encrypt(JSON.stringify({
+            userId: authenticatedUserId,
+            answers: submissionData
+          }));
+          
+          console.log('Encrypted submission data:', encryptedData); // Debug log
+        } catch (error) {
+          console.error('Error encrypting submission data:', error);
+          // Fallback to unencrypted data if encryption fails
+          const response = await fetch('/api/quiz/submit', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userId: authenticatedUserId,
+              answers: submissionData
+            }),
+          });
+          
+          const result = await response.json();
+          console.log('Submission result:', result); // Debug log
+          
+          if (result.success) {
+            console.log('Quiz submitted successfully');
+            setScore(result.score); // Update score in case it's different
+          } else {
+            console.error('Submission failed:', result);
+          }
+          
+          setSubmitting(false); // Reset submitting state
+          router.push('/results');
+          return; // Exit early since we've already handled the submission
+        }
 
         const response = await fetch('/api/quiz/submit', {
           method: 'POST',
@@ -296,8 +371,7 @@ export default function QuizGame({ userId }: QuizGameProps) {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            userId: authenticatedUserId,
-            answers: submissionData
+            data: encryptedData
           }),
         });
 
@@ -325,7 +399,25 @@ export default function QuizGame({ userId }: QuizGameProps) {
           return;
         }
 
-        const result = await response.json();
+        const responseData = await response.json();
+        
+        // Decrypt the response if it contains encrypted data
+        let result;
+        if (responseData.data) {
+          try {
+            const { SimpleEncryption } = await import('../lib/encryption-utils');
+            const decryptedData = SimpleEncryption.decrypt(responseData.data);
+            result = JSON.parse(decryptedData);
+          } catch (error) {
+            console.error('Error decrypting submission response:', error);
+            // Fallback to unencrypted data if decryption fails
+            result = responseData;
+          }
+        } else {
+          // Handle unencrypted data for backward compatibility
+          result = responseData;
+        }
+        
         console.log('Submission result:', result); // Debug log
 
         if (result.success) {
@@ -395,13 +487,50 @@ export default function QuizGame({ userId }: QuizGameProps) {
         const authenticatedUserId = userId;
         console.log('Using authenticated userId:', authenticatedUserId); // Debug log
 
-        // Submit all questions with their selected answers
+        // Prepare submission data
         const submissionData = questions.map((q, index) => ({
           questionId: q.id,
           selectedOption: newAnswers[index] !== null ? newAnswers[index] : -1 // -1 for unanswered (timed out), actual selection if answered
         }));
 
-        console.log('Submission data:', submissionData); // Debug log
+        // Encrypt the submission data
+        let encryptedData;
+        try {
+          const { SimpleEncryption } = await import('../lib/encryption-utils');
+          encryptedData = SimpleEncryption.encrypt(JSON.stringify({
+            userId: authenticatedUserId,
+            answers: submissionData
+          }));
+          
+          console.log('Encrypted submission data:', encryptedData); // Debug log
+        } catch (error) {
+          console.error('Error encrypting submission data:', error);
+          // Fallback to unencrypted data if encryption fails
+          const response = await fetch('/api/quiz/submit', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userId: authenticatedUserId,
+              answers: submissionData
+            }),
+          });
+          
+          const result = await response.json();
+          console.log('Submission result:', result); // Debug log
+          
+          if (result.success) {
+            console.log('Quiz submitted successfully');
+            setScore(result.score); // Update score in case it's different
+          } else {
+            console.error('Submission failed:', result);
+          }
+          
+          setSubmitting(false); // Reset submitting state
+          router.push('/results');
+          return; // Exit early since we've already handled the submission
+        }
 
         const response = await fetch('/api/quiz/submit', {
           method: 'POST',
@@ -409,8 +538,7 @@ export default function QuizGame({ userId }: QuizGameProps) {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            userId: authenticatedUserId,
-            answers: submissionData
+            data: encryptedData
           }),
         });
 

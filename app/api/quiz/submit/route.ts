@@ -5,6 +5,7 @@ import { eq } from 'drizzle-orm';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { TEST_MODE } from '../test';
+import { SimpleEncryption, APIValidator } from '@/lib/encryption-utils';
 
 interface AnswerSubmission {
   userId: string | number; // Accept both string and number to handle different client implementations
@@ -23,11 +24,38 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body: AnswerSubmission = await request.json();
-    const { userId, answers } = body;
+    const body = await request.json();
+    
+    // Check if data is encrypted
+    if (body.data) {
+      try {
+        // Decrypt the incoming data
+        const decryptedData = SimpleEncryption.decrypt(body.data);
+        const parsedData = JSON.parse(decryptedData);
+        
+        // Validate the structure of the decrypted data
+        if (!parsedData.userId || !parsedData.answers) {
+          return NextResponse.json({ error: 'Invalid encrypted data format' }, { status: 400 });
+        }
+        
+        var { userId, answers } = parsedData;
+      } catch (decryptError) {
+        console.error('Error decrypting data:', decryptError);
+        return NextResponse.json({ error: 'Invalid encrypted data' }, { status: 400 });
+      }
+    } else {
+      // Handle unencrypted data for backward compatibility
+      const { userId, answers } = body;
+      var userIdVar = userId;
+      var answersVar = answers;
+    }
+    
+    // Use the variables defined above
+    const userIdFinal = userIdVar !== undefined ? userIdVar : userId;
+    const answersFinal = answersVar !== undefined ? answersVar : answers;
 
     // Verify that the userId in the request matches the authenticated user's ID
-    if (session.user?.id !== userId.toString()) {
+    if (session.user?.id !== userIdFinal.toString()) {
       return NextResponse.json({ error: 'Unauthorized: Invalid user ID' }, { status: 401 });
     }
 
@@ -36,7 +64,7 @@ export async function POST(request: NextRequest) {
 
     console.log('Authenticated userId:', userIdString);
 
-    console.log('Submitting answers:', answers); // Debug log
+    console.log('Submitting answers:', answersFinal); // Debug log
 
     // Check if the user has already taken the quiz
     const existingResult = await db.select()
@@ -54,15 +82,25 @@ export async function POST(request: NextRequest) {
 
     const testMode = TEST_MODE; // Use the common test mode variable
 
+    // Validate the answers structure and content
+    const validation = APIValidator.validateQuizAnswers(answersFinal);
+    if (!validation.isValid) {
+      console.error('Validation errors:', validation.errors);
+      return NextResponse.json({ 
+        error: 'Invalid answers format', 
+        details: validation.errors 
+      }, { status: 400 });
+    }
+
     // Total number of questions in the quiz
-    let totalQuestions = answers.length;
+    let totalQuestions = answersFinal.length;
 
     // If in test mode, only process the first 3 questions (or however many were sent)
-    let filteredAnswers = answers;
+    let filteredAnswers = answersFinal;
     if (testMode) {
       // In test mode, we only evaluate the questions that were sent
       // This means totalQuestions should be the number of questions sent
-      totalQuestions = answers.length;
+      totalQuestions = answersFinal.length;
     }
 
     // Process all answers (including unanswered ones)
@@ -118,11 +156,16 @@ export async function POST(request: NextRequest) {
       date: new Date()
     }).returning();
 
-    return NextResponse.json({
+    // Encrypt the response
+    const encryptedResponse = SimpleEncryption.encrypt(JSON.stringify({
       success: true,
       score,
       totalQuestions,
       message: 'Quiz results saved successfully'
+    }));
+
+    return NextResponse.json({
+      data: encryptedResponse
     });
   } catch (error) {
     console.error('Error submitting quiz answers:', error);
