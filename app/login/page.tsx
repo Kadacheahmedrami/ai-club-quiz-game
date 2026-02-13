@@ -1,14 +1,36 @@
 'use client';
 
-import { getServerSession } from 'next-auth';
-import { redirect } from 'next/navigation';
-import { authOptions } from '@/lib/auth';
+import { useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import GoogleLoginButton from '@/components/auth/google-login-button';
 import GithubLoginButton from '@/components/auth/github-login-button';
 
 export default function LoginPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === 'loading') return; // Still loading
+    
+    if (session) {
+      // If user is already logged in, redirect to quiz page
+      router.push('/quiz');
+    }
+  }, [session, status, router]);
+
+  // Show loading state while checking session
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    );
+  }
+
+  // Only show login form if user is not logged in
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center">
       <div className="bg-gray-800 p-8 rounded-lg shadow-2xl w-full max-w-md">
         <h1 className="text-3xl font-bold text-center text-white mb-8">AI Club Quiz Game</h1>
 

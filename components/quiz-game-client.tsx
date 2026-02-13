@@ -34,122 +34,153 @@ export default function QuizGame({ userId }: QuizGameProps) {
   const [timerState, setTimerState] = useState<{timeSaved?: number, timeRemaining?: number}>({});
 
   useEffect(() => {
-    // Load quiz state from localStorage if available
-    const savedState = loadQuizState();
-
-    if (savedState && savedState.gameState === 'quiz') {
-      // Restore the quiz state
-      setCurrentQuestion(savedState.currentQuestion);
-      setScore(savedState.score);
-      setQuestions(savedState.questions);
-      setAnswered(savedState.answered);
-      setAnswers(savedState.answers);
-
-      // Set timer state if available
-      if (savedState.timeSaved !== undefined && savedState.timeRemaining !== undefined) {
-        setTimerState({
-          timeSaved: savedState.timeSaved,
-          timeRemaining: savedState.timeRemaining
-        });
+    // First, check the database to see if the user has already taken the quiz
+    const checkDatabaseStatus = async () => {
+      try {
+        const response = await fetch(`/api/quiz/result/${userId}`);
+        
+        if (response.ok) {
+          const result = await response.json();
+          if (result.exists) {
+            // User has already taken the quiz in the database, redirect to results
+            // and clear any local storage that might conflict
+            clearQuizState();
+            router.push('/results');
+            setLoading(false);
+            return;
+          }
+        } else {
+          // If there's an error checking the result, redirect to results page
+          router.push('/results');
+          setLoading(false);
+          return;
+        }
+      } catch (error) {
+        console.error('Error checking quiz result in database:', error);
+        router.push('/results');
+        setLoading(false);
+        return;
       }
 
-      setLoading(false);
-    } else if (savedState && savedState.gameState === 'results') {
-      // If the user has already completed the quiz, redirect to results
-      // But first, verify that the result still exists in the database
-      const verifyResult = async () => {
-        try {
-          const response = await fetch(`/api/quiz/result/${userId}`);
-          
-          if (response.ok) {
-            const result = await response.json();
-            if (!result.exists) {
-              // If the result doesn't exist in the database, clear the local state and allow retaking the quiz
-              clearQuizState();
-              const fetchQuestions = async () => {
-                try {
-                  const response = await fetch('/api/quiz/questions');
+      // If user hasn't taken the quiz in the database, proceed with loading local state
+      // Load quiz state from localStorage if available
+      const savedState = loadQuizState();
 
-                  if (!response.ok) {
-                    const errorData = await response.json();
+      if (savedState && savedState.gameState === 'quiz') {
+        // Restore the quiz state
+        setCurrentQuestion(savedState.currentQuestion);
+        setScore(savedState.score);
+        setQuestions(savedState.questions);
+        setAnswered(savedState.answered);
+        setAnswers(savedState.answers);
 
-                    if (response.status === 400 && errorData.alreadyTaken) {
-                      // User has already taken the quiz, redirect to results page
-                      router.push('/results');
-                      return;
-                    } else if (response.status === 401) {
-                      // Unauthorized, redirect to login
-                      router.push('/login');
-                      return;
+        // Set timer state if available
+        if (savedState.timeSaved !== undefined && savedState.timeRemaining !== undefined) {
+          setTimerState({
+            timeSaved: savedState.timeSaved,
+            timeRemaining: savedState.timeRemaining
+          });
+        }
+
+        setLoading(false);
+      } else if (savedState && savedState.gameState === 'results') {
+        // If the user has already completed the quiz in local storage, verify with database
+        const verifyResult = async () => {
+          try {
+            const response = await fetch(`/api/quiz/result/${userId}`);
+            
+            if (response.ok) {
+              const result = await response.json();
+              if (!result.exists) {
+                // If the result doesn't exist in the database, clear the local state and allow retaking the quiz
+                clearQuizState();
+                const fetchQuestions = async () => {
+                  try {
+                    const response = await fetch('/api/quiz/questions');
+
+                    if (!response.ok) {
+                      const errorData = await response.json();
+
+                      if (response.status === 400 && errorData.alreadyTaken) {
+                        // User has already taken the quiz, redirect to results page
+                        router.push('/results');
+                        return;
+                      } else if (response.status === 401) {
+                        // Unauthorized, redirect to login
+                        router.push('/login');
+                        return;
+                      }
+
+                      throw new Error(errorData.error || 'Failed to fetch questions');
                     }
 
-                    throw new Error(errorData.error || 'Failed to fetch questions');
+                    const data = await response.json();
+                    const fetchedQuestions = data.questions;
+                    setQuestions(fetchedQuestions);
+                    setAnswered(Array(fetchedQuestions.length).fill(false)); // Initialize answered array with correct length
+                    setAnswers(Array(fetchedQuestions.length).fill(null)); // Initialize answers array with correct length
+                  } catch (error) {
+                    console.error('Error fetching questions:', error);
+                  } finally {
+                    setLoading(false);
                   }
+                };
 
-                  const data = await response.json();
-                  const fetchedQuestions = data.questions;
-                  setQuestions(fetchedQuestions);
-                  setAnswered(Array(fetchedQuestions.length).fill(false)); // Initialize answered array with correct length
-                  setAnswers(Array(fetchedQuestions.length).fill(null)); // Initialize answers array with correct length
-                } catch (error) {
-                  console.error('Error fetching questions:', error);
-                } finally {
-                  setLoading(false);
-                }
-              };
-
-              fetchQuestions();
+                fetchQuestions();
+              } else {
+                // Result exists in DB, redirect to results page
+                router.push('/results');
+              }
             } else {
-              // Result exists in DB, redirect to results page
+              // If there's an error verifying the result, redirect to results page
               router.push('/results');
             }
-          } else {
-            // If there's an error verifying the result, redirect to results page
+          } catch (error) {
+            console.error('Error verifying quiz result:', error);
             router.push('/results');
           }
-        } catch (error) {
-          console.error('Error verifying quiz result:', error);
-          router.push('/results');
-        }
-      };
+        };
 
-      verifyResult();
-    } else {
-      // Fetch questions from backend if no saved state
-      const fetchQuestions = async () => {
-        try {
-          const response = await fetch('/api/quiz/questions');
+        verifyResult();
+      } else {
+        // Fetch questions from backend if no saved state
+        const fetchQuestions = async () => {
+          try {
+            const response = await fetch('/api/quiz/questions');
 
-          if (!response.ok) {
-            const errorData = await response.json();
+            if (!response.ok) {
+              const errorData = await response.json();
 
-            if (response.status === 400 && errorData.alreadyTaken) {
-              // User has already taken the quiz, redirect to results page
-              router.push('/results');
-              return;
-            } else if (response.status === 401) {
-              // Unauthorized, redirect to login
-              router.push('/login');
-              return;
+              if (response.status === 400 && errorData.alreadyTaken) {
+                // User has already taken the quiz, redirect to results page
+                router.push('/results');
+                return;
+              } else if (response.status === 401) {
+                // Unauthorized, redirect to login
+                router.push('/login');
+                return;
+              }
+
+              throw new Error(errorData.error || 'Failed to fetch questions');
             }
 
-            throw new Error(errorData.error || 'Failed to fetch questions');
+            const data = await response.json();
+            const fetchedQuestions = data.questions;
+            setQuestions(fetchedQuestions);
+            setAnswered(Array(fetchedQuestions.length).fill(false)); // Initialize answered array with correct length
+            setAnswers(Array(fetchedQuestions.length).fill(null)); // Initialize answers array with correct length
+          } catch (error) {
+            console.error('Error fetching questions:', error);
+          } finally {
+            setLoading(false);
           }
+        };
 
-          const data = await response.json();
-          const fetchedQuestions = data.questions;
-          setQuestions(fetchedQuestions);
-          setAnswered(Array(fetchedQuestions.length).fill(false)); // Initialize answered array with correct length
-          setAnswers(Array(fetchedQuestions.length).fill(null)); // Initialize answers array with correct length
-        } catch (error) {
-          console.error('Error fetching questions:', error);
-        } finally {
-          setLoading(false);
-        }
-      };
+        fetchQuestions();
+      }
+    };
 
-      fetchQuestions();
-    }
+    checkDatabaseStatus();
   }, [userId, router]);
 
 
@@ -208,6 +239,10 @@ export default function QuizGame({ userId }: QuizGameProps) {
       // Prevent multiple submissions
       if (submitting) return;
 
+      // Clear the quiz state before submitting to prevent any issues
+      clearQuizState();
+      console.log('Local storage cleared before submission'); // Debug log
+
       // Set submitting state to show loading screen
       setSubmitting(true);
 
@@ -254,7 +289,8 @@ export default function QuizGame({ userId }: QuizGameProps) {
 
           // Check if the error is due to user already taking the quiz
           if (response.status === 400 && errorData.alreadyTaken) {
-            // User has already taken the quiz, redirect to results page
+            // User has already taken the quiz, clear local storage and redirect to results page
+            clearQuizState(); // Clear any local state that might cause resubmission
             setSubmitting(false); // Reset submitting state
             router.push('/results');
             return;
@@ -270,17 +306,6 @@ export default function QuizGame({ userId }: QuizGameProps) {
         if (result.success) {
           console.log('Quiz submitted successfully');
           setScore(result.score); // Update score in case it's different
-
-          // Clear the quiz state since the quiz is completed
-          saveQuizState({
-            gameState: 'results',
-            currentQuestion: 0,
-            score: result.score,
-            questions: [],
-            answered: [],
-            answers: [],
-            completedAt: Date.now()
-          });
         } else {
           console.error('Submission failed:', result);
         }
@@ -316,13 +341,6 @@ export default function QuizGame({ userId }: QuizGameProps) {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
-      {/* GIF background */}
-      <img
-        src="/bg.webp"
-        alt="background"
-        className="absolute inset-0 w-full h-full object-cover md:translate-y-0 -translate-y-1/4 "
-      />
-
       {/* Show loading spinner when submitting */}
       {submitting && <LoadingSpinner />}
 

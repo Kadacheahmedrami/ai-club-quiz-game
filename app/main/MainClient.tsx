@@ -48,7 +48,7 @@ export default function MainClient({ userId }: MainClientProps) {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen ">
       <WelcomeScreen 
         onStartQuiz={hasTakenQuiz ? handleRetakeQuiz : handleStartQuiz} 
         hasTakenQuiz={hasTakenQuiz}

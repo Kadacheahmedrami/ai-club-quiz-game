@@ -17,6 +17,9 @@ export default function ResultsClient({ userId }: ResultsClientProps) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Clear any local storage when the results page loads
+    clearQuizState();
+
     // Fetch the user's quiz results from the database
     if (userId) {
       const fetchResults = async () => {
@@ -28,21 +31,18 @@ export default function ResultsClient({ userId }: ResultsClientProps) {
               setScore(result.score);
               setTotalQuestions(result.totalQuestions);
             } else {
-              // If user hasn't taken the quiz, clear any local storage and redirect to the quiz page
-              clearQuizState(); // Clear any local storage that might indicate the quiz was completed
+              // If user hasn't taken the quiz, redirect to the quiz page
               router.push('/quiz');
               return;
             }
           } else {
-            // If there's an error fetching results, clear local storage and redirect to quiz
-            clearQuizState(); // Clear any local storage that might indicate the quiz was completed
+            // If there's an error fetching results, redirect to quiz
             router.push('/quiz');
             return;
           }
         } catch (error) {
           console.error('Error fetching quiz results:', error);
-          // On error, clear local storage and redirect to quiz page
-          clearQuizState(); // Clear any local storage that might indicate the quiz was completed
+          // On error, redirect to quiz page
           router.push('/quiz');
           return;
         } finally {
@@ -71,7 +71,7 @@ export default function ResultsClient({ userId }: ResultsClientProps) {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen ">
       <ResultsScreen
         score={score}
         totalQuestions={totalQuestions}
