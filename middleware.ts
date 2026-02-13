@@ -1,9 +1,154 @@
-import { withAuth } from 'next-auth/middleware';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// This function protects routes by checking if the user is authenticated
+// Simple in-memory store for rate limiting (for demo purposes)
+// In production, use a distributed store like Redis
+const requestCounts = new Map<string, { count: number; timestamp: number }>();
+
+// Bot detection patterns
+const BOT_PATTERNS = [
+  /bot/i,
+  /crawler/i,
+  /spider/i,
+  /slurp/i,
+  /wget/i,
+  /curl/i,
+  /python/i,
+  /node/i,
+  /go-http-client/i,
+  /java/i,
+  /php/i,
+  /perl/i,
+  /scrapy/i,
+  /axios/i,
+  /httpclient/i,
+  /postman/i,
+  /insomnia/i,
+  /python-requests/i,
+  /fasthttp/i,
+  /aiohttp/i,
+  /http\.rb/i,
+  /faraday/i,
+  /mechanize/i,
+  /selenium/i,
+  /phantomjs/i,
+  /headless/i,
+  /puppeteer/i,
+  /playwright/i,
+  /undici/i,
+  /node-fetch/i,
+  /got/i,
+  /request-promise/i,
+  /superagent/i,
+  /ky/i,
+  /ofetch/i,
+  /axios-fetch/i,
+  /fetch-ponyfill/i,
+  /cross-fetch/i,
+  /isomorphic-fetch/i,
+  /node-libcurl/i,
+  /request/i,
+  /restify/i,
+  /frisbee/i,
+  /ky-universal/i,
+  /make-fetch-happen/i,
+  /simple-get/i,
+  /got-fetch/i,
+  /node-fetch-h2/i,
+  /fetch-blob/i,
+  /form-data/i,
+  /formdata-node/i,
+  /undici-fetch/i,
+  /minipass-fetch/i,
+  /minipass-flush/i,
+  /minipass-pipeline/i,
+  /minipass-collect/i,
+  /minipass-json-stream/i
+];
+
+// Rate limiting configuration
+const RATE_LIMIT = {
+  WINDOW_MS: 15 * 60 * 1000, // 15 minutes
+  MAX_REQUESTS: 100, // Max 100 requests per window
+};
+
+// Function to check if user agent is a bot
+function isBot(userAgent: string | null): boolean {
+  if (!userAgent) return false;
+  
+  return BOT_PATTERNS.some(pattern => pattern.test(userAgent));
+}
+
+// Function to check rate limit
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const windowStart = now - RATE_LIMIT.WINDOW_MS;
+  
+  // Clean up old entries
+  for (const [key, value] of requestCounts.entries()) {
+    if (value.timestamp < windowStart) {
+      requestCounts.delete(key);
+    }
+  }
+  
+  // Get current count for IP
+  const ipRecord = requestCounts.get(ip);
+  
+  if (!ipRecord) {
+    // First request from this IP
+    requestCounts.set(ip, { count: 1, timestamp: now });
+    return false;
+  }
+  
+  // Check if rate limit exceeded
+  if (ipRecord.count >= RATE_LIMIT.MAX_REQUESTS) {
+    return true;
+  }
+  
+  // Increment count
+  requestCounts.set(ip, { 
+    count: ipRecord.count + 1, 
+    timestamp: now 
+  });
+  
+  return false;
+}
+
+// Function to get client IP
+function getClientIp(req: NextRequest): string {
+  // Try to get IP from various headers
+  const forwardedFor = req.headers.get('x-forwarded-for');
+  if (forwardedFor) {
+    // Handle multiple IPs in the header
+    const ips = forwardedFor.split(',').map(ip => ip.trim());
+    return ips[0]; // Take the first IP
+  }
+  
+  const realIp = req.headers.get('x-real-ip');
+  if (realIp) {
+    return realIp;
+  }
+  
+  // Fallback to default
+  return req.ip || 'unknown';
+}
+
 export default function middleware(req: NextRequest) {
+  const ip = getClientIp(req);
+  const userAgent = req.headers.get('user-agent');
+  
+  // Bot detection
+  if (isBot(userAgent)) {
+    console.warn(`Blocked bot request from IP: ${ip}, User-Agent: ${userAgent}`);
+    return new NextResponse('Forbidden', { status: 403 });
+  }
+  
+  // Rate limiting
+  if (isRateLimited(ip)) {
+    console.warn(`Rate limited request from IP: ${ip}`);
+    return new NextResponse('Too Many Requests', { status: 429 });
+  }
+  
   // Define protected routes
   const protectedPaths = [
     '/api/quiz/questions',
@@ -68,7 +213,6 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
-    '/api/quiz/:path*' // Protect quiz API routes
+    '/((?!_next/static|_next/image|favicon.ico).*)',
   ]
 };
