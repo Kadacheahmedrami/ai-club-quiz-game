@@ -6,11 +6,18 @@ import ResultsScreen from '@/components/quiz/results-screen';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import { clearQuizState } from '@/lib/quiz-storage';
 
-interface ResultsClientProps {
-  userId: string | undefined;
+interface User {
+  id: string;
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
 }
 
-export default function ResultsClient({ userId }: ResultsClientProps) {
+interface ResultsClientProps {
+  user: User | undefined;
+}
+
+export default function ResultsClient({ user }: ResultsClientProps) {
   const router = useRouter();
   const [score, setScore] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(0);
@@ -21,10 +28,11 @@ export default function ResultsClient({ userId }: ResultsClientProps) {
     clearQuizState();
 
     // Fetch the user's quiz results from the database
-    if (userId) {
+    if (user?.id) {
       const fetchResults = async () => {
         try {
-          const response = await fetch(`/api/quiz/result/${userId}`);
+          // Fetch the user's quiz results
+          const response = await fetch(`/api/quiz/result/${user.id}`);
           if (response.ok) {
             const result = await response.json();
             if (result.exists) {
@@ -52,10 +60,10 @@ export default function ResultsClient({ userId }: ResultsClientProps) {
 
       fetchResults();
     } else {
-      // If no userId, redirect to login
+      // If no user, redirect to login
       router.push('/login');
     }
-  }, [userId, router]);
+  }, [user, router]);
 
   if (loading) {
     return <LoadingSpinner />;
@@ -71,12 +79,15 @@ export default function ResultsClient({ userId }: ResultsClientProps) {
   };
 
   return (
-    <div className="min-h-screen ">
-      <ResultsScreen
-        score={score}
-        totalQuestions={totalQuestions}
-        onPlayAgain={handlePlayAgain}
-      />
+    <div className="min-h-screen">
+      <div className="container mx-auto px-4 py-8">
+        <ResultsScreen
+          score={score}
+          totalQuestions={totalQuestions}
+          onPlayAgain={handlePlayAgain}
+          userName={user?.name ?? undefined}
+        />
+      </div>
     </div>
   );
 }

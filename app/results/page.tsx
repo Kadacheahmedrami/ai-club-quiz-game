@@ -10,7 +10,7 @@ export default async function ResultsPage() {
     redirect('/login');
   }
 
-  const userId = session.user?.id;
+  const user = session.user;
 
-  return <ResultsClient userId={userId} />;
+  return <ResultsClient user={user} />;
 }

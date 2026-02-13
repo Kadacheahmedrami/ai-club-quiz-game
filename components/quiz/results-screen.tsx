@@ -9,12 +9,14 @@ interface ResultsScreenProps {
   score: number
   totalQuestions: number
   onPlayAgain: () => void
+  userName?: string | null
 }
 
 export default function ResultsScreen({
   score,
   totalQuestions,
   onPlayAgain,
+  userName,
 }: ResultsScreenProps) {
   const router = useRouter();
   const [showCopied, setShowCopied] = useState(false)
@@ -29,16 +31,48 @@ export default function ResultsScreen({
     }
   }
 
-  const getMessage = () => {
-    if (percentage === 100) return "🎯 Perfect Score! You're an AI Master!"
-    if (percentage >= 80) return '🌟 Excellent! Join the AI Club!'
-    if (percentage >= 60) return '🚀 Good Job! Keep Learning AI!'
-    if (percentage >= 40) return '💡 Not Bad! Study More AI Concepts!'
-    return '📚 Keep Practicing! AI Awaits You!'
-  }
+  // Function to get character image based on percentage
+  const getCharacterImage = (percentage: number): string => {
+    if (percentage === 100) return '/caracteres/gojo.png'; // Perfect score - Gojo
+    if (percentage >= 95) return '/caracteres/sukuna.png'; // Very high score - Sukuna
+    if (percentage >= 90) return '/caracteres/toji.png'; // High score - Toji
+    if (percentage >= 85) return '/caracteres/mahito.png'; // High-medium score - Mahito
+    if (percentage >= 80) return '/caracteres/itadori.png'; // Medium-high score - Itadori
+    if (percentage >= 70) return '/caracteres/megumi.png'; // Medium score - Megumi
+    if (percentage >= 60) return '/caracteres/nanami.png'; // Medium-low score - Nanami
+    if (percentage >= 50) return '/caracteres/nobara.png'; // Low-medium score - Nobara
+    if (percentage >= 40) return '/caracteres/maki.png'; // Low score - Maki
+    if (percentage >= 30) return '/caracteres/panda.png'; // Very low score - Panda
+    return '/caracteres/nauh.png'; // Lowest score - Nauh
+  };
 
-  const handleShare = () => {
-    const text = `I scored ${score}/${totalQuestions} (${percentage}%) on the Bejaia AI Club Quiz! Can you beat my score? 🚀 #AIClub #ThinkDeeper`
+const getMessage = (percentage: number) => {
+  if (percentage === 100)
+    return "“Throughout Heaven and Earth, I alone am the honored one.” — Satoru Gojo";
+  if (percentage >= 95)
+    return "“Fool… weaklings are better off dead. Stand proud, you are strong!” — Ryomen Sukuna";
+  if (percentage >= 90)
+    return "“I don’t fight because I hate people. I fight because I love my life.” — Toji Fushiguro";
+  if (percentage >= 85)
+    return "“Humans… I’ll reshape you as I please.” — Mahito";
+  if (percentage >= 80)
+    return "“I’m not gonna regret the way I live!” — Yuji Itadori";
+  if (percentage >= 70)
+    return "“I can’t save everyone… but I can save the people I can.” — Megumi Fushiguro";
+  if (percentage >= 60)
+    return "“It’s just a job. I do it for the money.” — Kento Nanami";
+  if (percentage >= 50)
+    return "“I’m Nobara Kugisaki. Don’t you forget it!” — Nobara Kugisaki";
+  if (percentage >= 40)
+    return "“I’ll surpass everyone, curse or no curse.” — Maki Zenin";
+  if (percentage >= 30)
+    return "“I’m Panda. Don’t underestimate me.” — Panda";
+  return "Keep training… the Jujutsu path awaits you!";
+};
+
+
+const handleShare = () => {
+    const text = `I scored ${score}/${totalQuestions} (${percentage}%) on the Jujutsu Quiz! Can you surpass my cursed energy level? ⚡️ #JujutsuKaisen #DomainExpansion`
     navigator.clipboard.writeText(text).then(() => {
       setShowCopied(true)
       setTimeout(() => setShowCopied(false), 2000)
@@ -61,19 +95,21 @@ export default function ResultsScreen({
 
       <div className="relative z-10 w-full max-w-md">
         <div className="bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-xl border border-cyan-500/30 rounded-2xl p-8 shadow-2xl text-center">
-          {/* Score Circle */}
+          {/* Character Image */}
           <div className="mb-8">
-            <div className="w-40 h-40 mx-auto mb-6 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center shadow-2xl">
-              <div className="text-center">
-                <p className="text-6xl font-bold text-white">{percentage}</p>
-                <p className="text-gray-200 text-sm">%</p>
-              </div>
+            <div className="w-40 h-40 mx-auto mb-6 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center shadow-2xl overflow-hidden">
+              <img 
+                src={getCharacterImage(percentage)} 
+                alt="Jujutsu Character" 
+                className="w-full h-full object-cover"
+              />
             </div>
+            <p className="text-2xl font-bold text-white">{percentage}%</p>
           </div>
 
           {/* Results Text */}
-          <h2 className="text-3xl font-bold text-white mb-2">Quiz Complete!</h2>
-          <p className="text-cyan-400 text-xl font-semibold mb-6">{getMessage()}</p>
+          {userName && <p className="text-xl text-cyan-300 mb-2">Hello, {userName}!</p>}
+          <p className=" text-xl font-semibold mb-6">{getMessage(percentage)}</p>
 
           {/* Score Details */}
           <div className="bg-slate-700/30 border border-cyan-500/20 rounded-xl p-6 mb-8">
@@ -98,9 +134,9 @@ export default function ResultsScreen({
 
           {/* Tagline */}
           <p className="text-gray-300 mb-8">
-            Welcome to <span className="text-cyan-400 font-semibold">School of AI - Bejaia</span>
+            Welcome to <span className="text-cyan-400 font-semibold">Jujutsu High</span>
             <br />
-            <span className="text-sm">Think Deeper • Do Better</span>
+            <span className="text-sm">Master Cursed Energy • Protect Humanity</span>
           </p>
 
           {/* Action Buttons */}
@@ -118,9 +154,9 @@ export default function ResultsScreen({
 
           {/* Footer */}
           <p className="text-gray-400 text-sm mt-8">
-            Ready to join our AI learning community?
+            Ready to become a sorcerer?
             <br />
-            <span className="text-cyan-400 font-semibold">See you at the next event! 🚀</span>
+            <span className="text-cyan-400 font-semibold">Face stronger curses next time! 🔮</span>
           </p>
         </div>
       </div>
