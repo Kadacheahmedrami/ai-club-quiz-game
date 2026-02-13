@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
 import { useState, useEffect } from 'react'
-import WelcomeScreen from './quiz/welcome-screen'
+import { useRouter } from 'next/navigation';
 import QuizQuestion from './quiz/quiz-question'
 import ResultsScreen from './quiz/results-screen'
 import LoadingSpinner from '@/components/ui/loading-spinner'
@@ -16,12 +16,13 @@ export interface Question {
 }
 
 type QuizGameProps = {
-  userId: number;
+  userId: string;
 };
 
 export default function QuizGame({ userId }: QuizGameProps) {
-  const [gameState, setGameState] = useState<'welcome' | 'quiz' | 'results'>(
-    'welcome'
+  const router = useRouter();
+  const [gameState, setGameState] = useState<'quiz' | 'results'>(
+    'quiz'
   )
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [score, setScore] = useState(0)
@@ -34,45 +35,64 @@ export default function QuizGame({ userId }: QuizGameProps) {
   const [timerState, setTimerState] = useState<{timeSaved?: number, timeRemaining?: number}>({});
 
   useEffect(() => {
-    // Restore state from localStorage if available
-    const savedState = loadQuizState();
-
-    if (savedState && savedState.questions.length > 0) {
-      // If we have saved state, use it
-      setGameState(savedState.gameState);
-      setCurrentQuestion(savedState.currentQuestion);
-      setScore(savedState.score);
-      setQuestions(savedState.questions);
-      setAnswered(savedState.answered);
-      setAnswers(savedState.answers);
-      // Set timer state if available in saved state
-      if (savedState.timeSaved !== undefined && savedState.timeRemaining !== undefined) {
-        setTimerState({
-          timeSaved: savedState.timeSaved,
-          timeRemaining: savedState.timeRemaining
-        });
-      }
-      setLoading(false);
-    } else {
-      // Otherwise, fetch questions from backend
-      const fetchQuestions = async () => {
-        try {
-          const response = await fetch('/api/quiz/questions');
-          const data = await response.json();
-          const fetchedQuestions = data.questions;
-          setQuestions(fetchedQuestions);
-          setAnswered(Array(fetchedQuestions.length).fill(false)); // Initialize answered array with correct length
-          setAnswers(Array(fetchedQuestions.length).fill(null)); // Initialize answers array with correct length
-        } catch (error) {
-          console.error('Error fetching questions:', error);
-        } finally {
-          setLoading(false);
+    // First, check if the user has already taken the quiz
+    const checkExistingResult = async () => {
+      try {
+        const response = await fetch(`/api/quiz/result/${userId}`);
+        if (response.ok) {
+          const result = await response.json();
+          if (result.exists) {
+            // User has already taken the quiz, redirect to results page
+            router.push('/results');
+            return;
+          }
         }
-      };
+      } catch (error) {
+        console.error('Error checking existing quiz result:', error);
+      }
 
-      fetchQuestions();
-    }
-  }, []);
+      // Restore state from localStorage if available
+      const savedState = loadQuizState();
+
+      if (savedState && savedState.questions.length > 0) {
+        // If we have saved state, use it
+        setGameState(savedState.gameState);
+        setCurrentQuestion(savedState.currentQuestion);
+        setScore(savedState.score);
+        setQuestions(savedState.questions);
+        setAnswered(savedState.answered);
+        setAnswers(savedState.answers);
+        // Set timer state if available in saved state
+        if (savedState.timeSaved !== undefined && savedState.timeRemaining !== undefined) {
+          setTimerState({
+            timeSaved: savedState.timeSaved,
+            timeRemaining: savedState.timeRemaining
+          });
+        }
+        setLoading(false);
+      } else {
+        // Otherwise, fetch questions from backend
+        const fetchQuestions = async () => {
+          try {
+            const response = await fetch('/api/quiz/questions');
+            const data = await response.json();
+            const fetchedQuestions = data.questions;
+            setQuestions(fetchedQuestions);
+            setAnswered(Array(fetchedQuestions.length).fill(false)); // Initialize answered array with correct length
+            setAnswers(Array(fetchedQuestions.length).fill(null)); // Initialize answers array with correct length
+          } catch (error) {
+            console.error('Error fetching questions:', error);
+          } finally {
+            setLoading(false);
+          }
+        };
+
+        fetchQuestions();
+      }
+    };
+
+    checkExistingResult();
+  }, [userId, router]);
 
   const handleStartQuiz = () => {
     setGameState('quiz')
@@ -160,15 +180,12 @@ export default function QuizGame({ userId }: QuizGameProps) {
       console.log('All answers:', answers); // Debug log
 
       try {
-        // Get the authenticated user ID from the session
-        const sessionResponse = await fetch('/api/auth/session');
-        const session = await sessionResponse.json();
-
-        if (!session || !session.user?.id) {
+        // Use the userId passed as a prop
+        if (!userId) {
           console.error('User not authenticated');
           alert('Please log in to submit the quiz');
           setGameState('results');
-          
+
           // Save state to localStorage after setting game state to results
           saveQuizState({
             gameState: 'results',
@@ -178,12 +195,12 @@ export default function QuizGame({ userId }: QuizGameProps) {
             answered: newAnswered,
             answers
           });
-          
+
           setSubmitting(false); // Reset submitting state
           return;
         }
 
-        const authenticatedUserId = session.user.id;
+        const authenticatedUserId = userId;
         console.log('Using authenticated userId:', authenticatedUserId); // Debug log
 
         // Submit all questions with their selected answers
@@ -210,9 +227,37 @@ export default function QuizGame({ userId }: QuizGameProps) {
           console.error('Submission failed with status:', response.status);
           const errorText = await response.text();
           console.error('Error response:', errorText);
-          // Still go to results screen but without scores
-          setGameState('results');
           
+          // Check if the error is due to user already taking the quiz
+          if (response.status === 400) {
+            try {
+              const errorJson = JSON.parse(errorText);
+              if (errorJson.error && errorJson.error.includes('already taken the quiz')) {
+                alert('You have already taken the quiz. Results will be shown.');
+                setGameState('results');
+                
+                // Save state to localStorage after setting game state to results
+                saveQuizState({
+                  gameState: 'results',
+                  currentQuestion,
+                  score,
+                  questions,
+                  answered: newAnswered,
+                  answers,
+                  completedAt: Date.now() // Mark when the quiz was completed
+                });
+                
+                setSubmitting(false); // Reset submitting state
+                return;
+              }
+            } catch (parseError) {
+              console.error('Error parsing error response:', parseError);
+            }
+          }
+          
+          // For other errors, still go to results screen but without scores
+          setGameState('results');
+
           // Save state to localStorage after setting game state to results
           saveQuizState({
             gameState: 'results',
@@ -222,7 +267,7 @@ export default function QuizGame({ userId }: QuizGameProps) {
             answered: newAnswered,
             answers
           });
-          
+
           setSubmitting(false); // Reset submitting state
           return;
         }
@@ -241,9 +286,6 @@ export default function QuizGame({ userId }: QuizGameProps) {
         // Still go to results screen but without scores
       }
 
-      // Move to results screen after attempting submission
-      setGameState('results');
-
       // Save state to localStorage after setting game state to results
       saveQuizState({
         gameState: 'results',
@@ -256,6 +298,9 @@ export default function QuizGame({ userId }: QuizGameProps) {
       });
 
       setSubmitting(false); // Reset submitting state
+
+      // Navigate to the results page immediately
+      router.push('/results');
 
       // Don't clear the quiz state when quiz is completed so user stays on results screen after refresh
       // Only clear state when user chooses to play again
@@ -287,10 +332,13 @@ export default function QuizGame({ userId }: QuizGameProps) {
 
       {/* Content */}
       <div className={`${submitting ? 'opacity-0 pointer-events-none' : ''} relative z-10`}>
-        {gameState === 'welcome' && (
-          <WelcomeScreen onStartQuiz={handleStartQuiz} />
-        )}
-        {gameState === 'quiz' && (
+        {loading ? (
+          <div className="flex items-center justify-center h-screen">
+            <div className="text-center">
+              <p className="text-2xl text-white">Loading quiz...</p>
+            </div>
+          </div>
+        ) : gameState === 'quiz' && questions.length > 0 ? (
           <QuizQuestion
             question={questions[currentQuestion]}
             questionNumber={currentQuestion + 1}
@@ -308,7 +356,7 @@ export default function QuizGame({ userId }: QuizGameProps) {
                 timeSaved: Date.now(),
                 timeRemaining
               });
-              
+
               // Update the saved state with timer information
               saveQuizState({
                 gameState,
@@ -322,14 +370,13 @@ export default function QuizGame({ userId }: QuizGameProps) {
               });
             }}
           />
-        )}
-        {gameState === 'results' && (
-          <ResultsScreen
-            score={score}
-            totalQuestions={questions.length}
-            onPlayAgain={handlePlayAgain}
-          />
-        )}
+        ) : gameState === 'results' ? (
+          <div className="flex items-center justify-center h-screen">
+            <div className="text-center">
+              <p className="text-2xl text-white">Redirecting to results...</p>
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   )

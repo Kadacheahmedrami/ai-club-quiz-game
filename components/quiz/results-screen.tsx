@@ -3,20 +3,33 @@
 import { Button } from '@/components/ui/button'
 import { RotateCcwIcon, ShareIcon } from 'lucide-react'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 interface ResultsScreenProps {
   score: number
   totalQuestions: number
   onPlayAgain: () => void
+  onCloseQuiz?: () => void  // Optional prop to close the quiz
 }
 
 export default function ResultsScreen({
   score,
   totalQuestions,
-  onPlayAgain
+  onPlayAgain,
+  onCloseQuiz
 }: ResultsScreenProps) {
+  const router = useRouter();
   const [showCopied, setShowCopied] = useState(false)
   const percentage = Math.round((score / totalQuestions) * 100)
+
+  const handlePlayAgain = () => {
+    if (onPlayAgain) {
+      onPlayAgain();
+    } else {
+      // Navigate back to the quiz page to play again
+      router.push('/quiz');
+    }
+  }
 
   const getMessage = () => {
     if (percentage === 100) return "🎯 Perfect Score! You're an AI Master!"
@@ -32,6 +45,15 @@ export default function ResultsScreen({
       setShowCopied(true)
       setTimeout(() => setShowCopied(false), 2000)
     })
+  }
+
+  const handleCloseQuiz = () => {
+    if (onCloseQuiz) {
+      onCloseQuiz();
+    } else {
+      // Fallback navigation if no onCloseQuiz handler is provided
+      window.location.href = '/';
+    }
   }
 
   return (
@@ -86,7 +108,7 @@ export default function ResultsScreen({
 
           {/* Tagline */}
           <p className="text-gray-300 mb-8">
-            Welcome to <span className="text-cyan-400 font-semibold">Bejaia School of AI</span>
+            Welcome to <span className="text-cyan-400 font-semibold">School of AI - Bejaia</span>
             <br />
             <span className="text-sm">Think Deeper • Do Better</span>
           </p>
@@ -94,7 +116,7 @@ export default function ResultsScreen({
           {/* Action Buttons */}
           <div className="space-y-3">
             <Button
-              onClick={onPlayAgain}
+              onClick={handlePlayAgain}
               className="w-full py-6 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-slate-950 font-bold text-lg rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shadow-lg"
             >
               <RotateCcwIcon size={24} />
@@ -106,6 +128,13 @@ export default function ResultsScreen({
             >
               <ShareIcon size={24} />
               {showCopied ? 'Copied!' : 'Share Result'}
+            </Button>
+            <Button
+              onClick={handleCloseQuiz}
+              variant="outline"
+              className="w-full py-6 border-cyan-500 text-cyan-500 hover:bg-cyan-500/10 font-bold text-lg rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95"
+            >
+              Close Quiz
             </Button>
           </div>
 

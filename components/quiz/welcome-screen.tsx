@@ -5,9 +5,10 @@ import { PlayIcon } from 'lucide-react'
 
 interface WelcomeScreenProps {
   onStartQuiz: () => void
+  hasTakenQuiz?: boolean
 }
 
-export default function WelcomeScreen({ onStartQuiz }: WelcomeScreenProps) {
+export default function WelcomeScreen({ onStartQuiz,  hasTakenQuiz = false }: WelcomeScreenProps) {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4">
       {/* Logo Section */}
@@ -22,10 +23,10 @@ export default function WelcomeScreen({ onStartQuiz }: WelcomeScreenProps) {
           />
         </div>
         <h1 className="text-4xl md:text-6xl font-bold text-white mb-2">
-          Bejaia School Of AI
+          {hasTakenQuiz ? 'AI Quiz Completed!' : 'School Of AI - Bejaia'}
         </h1>
         <p className="text-cyan-400 text-lg font-semibold mb-8">
-          Think Deeper • Do Better
+          {hasTakenQuiz ? 'View your results below' : 'Think Deeper • Do Better'}
         </p>
       </div>
 
@@ -40,7 +41,7 @@ export default function WelcomeScreen({ onStartQuiz }: WelcomeScreenProps) {
               Test your knowledge about Artificial Intelligence
             </p>
             <p className="text-cyan-400 text-sm">
-              5 questions • 20 seconds each
+              20 questions • 20 seconds each
             </p>
           </div>
 
@@ -66,9 +67,10 @@ export default function WelcomeScreen({ onStartQuiz }: WelcomeScreenProps) {
             className="w-full py-6 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-slate-950 font-bold text-lg rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shadow-lg"
           >
             <PlayIcon size={24} />
-            Start Quiz
+            {hasTakenQuiz ? 'Review Quiz' : 'Start Quiz'}
           </Button>
-
+          
+    
           {/* Footer */}
           <p className="text-center text-gray-400 text-sm mt-6">
             Good luck! 🚀

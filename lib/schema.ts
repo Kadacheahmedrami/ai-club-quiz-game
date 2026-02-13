@@ -1,15 +1,16 @@
-import { pgTable, serial, text, integer, timestamp, boolean, primaryKey } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, integer, timestamp, boolean, primaryKey, index } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
 import { type AdapterAccount } from '@auth/core/adapters';
 
 // ============================================
 // NextAuth.js / Auth.js Tables
 // ============================================
 
-export const users = pgTable('users', {
+export const users = pgTable('user', {
   id: text('id')
     .notNull()
     .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
+    .$defaultFn(() => sql`gen_random_uuid()`),
   name: text('name'),
   email: text('email').notNull(),
   emailVerified: timestamp('emailVerified', { mode: 'date' }),
@@ -17,7 +18,7 @@ export const users = pgTable('users', {
 });
 
 export const accounts = pgTable(
-  'accounts',
+  'account',
   {
     userId: text('userId')
       .notNull()
@@ -40,7 +41,7 @@ export const accounts = pgTable(
   })
 );
 
-export const sessions = pgTable('sessions', {
+export const sessions = pgTable('session', {
   sessionToken: text('sessionToken').notNull().primaryKey(),
   userId: text('userId')
     .notNull()
@@ -49,7 +50,7 @@ export const sessions = pgTable('sessions', {
 });
 
 export const verificationTokens = pgTable(
-  'verification_tokens',
+  'verificationToken',
   {
     identifier: text('identifier').notNull(),
     token: text('token').notNull(),
@@ -72,6 +73,11 @@ export const quizResults = pgTable('quiz_results', {
   score: integer('score').notNull(),
   totalQuestions: integer('total_questions').notNull(),
   date: timestamp('date').defaultNow().notNull(),
+}, (table) => {
+  return {
+    userIdIdx: index('quiz_results_user_id_idx').on(table.userId),
+    dateIdx: index('quiz_results_date_idx').on(table.date),
+  };
 });
 
 export const quizQuestions = pgTable('quiz_questions', {
@@ -83,6 +89,10 @@ export const quizQuestions = pgTable('quiz_questions', {
   option4: text('option4').notNull(),
   correctAnswerIndex: integer('correct_answer_index').notNull(), // 0-3 for the four options
   createdAt: timestamp('created_at').defaultNow().notNull(),
+}, (table) => {
+  return {
+    idIdx: index('quiz_questions_id_idx').on(table.id),
+  };
 });
 
 // Removed quizAnswers table as per requirement - only storing results, not individual answers

@@ -1,1 +1,0 @@
-DROP TABLE "quiz_answers" CASCADE;

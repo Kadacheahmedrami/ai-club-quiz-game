@@ -16,5 +16,5 @@ export default async function QuizGameWrapper() {
   }
 
   // Pass the user ID to the client component
-  return <QuizGameClient userId={Number(session.user.id)} />;
+  return <QuizGameClient userId={session.user.id as string} />;
 }

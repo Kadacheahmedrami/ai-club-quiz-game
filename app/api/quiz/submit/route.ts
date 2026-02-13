@@ -38,6 +38,18 @@ export async function POST(request: NextRequest) {
 
     console.log('Submitting answers:', answers); // Debug log
 
+    // Check if the user has already taken the quiz
+    const existingResult = await db.select()
+      .from(quizResults)
+      .where(eq(quizResults.userId, userIdString))
+      .limit(1);
+
+    if (existingResult.length > 0) {
+      return NextResponse.json({ 
+        error: 'User has already taken the quiz' 
+      }, { status: 400 });
+    }
+
     const testMode = TEST_MODE; // Use the common test mode variable
 
     // Total number of questions in the quiz
