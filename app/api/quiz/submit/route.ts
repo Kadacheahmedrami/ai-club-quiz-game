@@ -4,6 +4,7 @@ import { quizResults, users, quizQuestions } from '@/lib/schema';
 import { eq } from 'drizzle-orm';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { TEST_MODE } from '../test';
 
 interface AnswerSubmission {
   userId: string | number; // Accept both string and number to handle different client implementations
@@ -32,17 +33,16 @@ export async function POST(request: NextRequest) {
 
     // Use the authenticated user's ID from the session
     const userIdString = session.user.id;
-    
+
     console.log('Authenticated userId:', userIdString);
 
     console.log('Submitting answers:', answers); // Debug log
-    
-    // Hardcoded test mode - set to true to enable test mode, false to disable
-    const testMode = true; // Change this to false to disable test mode
-    
+
+    const testMode = TEST_MODE; // Use the common test mode variable
+
     // Total number of questions in the quiz
     let totalQuestions = answers.length;
-    
+
     // If in test mode, only process the first 3 questions (or however many were sent)
     let filteredAnswers = answers;
     if (testMode) {
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
       // This means totalQuestions should be the number of questions sent
       totalQuestions = answers.length;
     }
-    
+
     // Process all answers (including unanswered ones)
     let score = 0;
     const processedAnswers = [];
@@ -68,13 +68,13 @@ export async function POST(request: NextRequest) {
         const question = await db.select({
           correctAnswerIndex: quizQuestions.correctAnswerIndex
         }).from(quizQuestions).where(eq(quizQuestions.id, answer.questionId)).limit(1);
-        
+
         if (question.length > 0) {
           const isCorrect = answer.selectedOption === question[0].correctAnswerIndex;
           if (isCorrect) {
             score++;
           }
-          
+
           processedAnswers.push({
             questionId: answer.questionId,
             selectedOption: answer.selectedOption,
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
         }
       }
     }
-    
+
     console.log('Processed answers:', processedAnswers); // Debug log
     console.log('Calculated score:', score); // Debug log
     console.log('Total questions:', totalQuestions); // Debug log

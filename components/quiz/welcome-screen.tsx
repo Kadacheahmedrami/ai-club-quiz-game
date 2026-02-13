@@ -13,25 +13,13 @@ export default function WelcomeScreen({ onStartQuiz }: WelcomeScreenProps) {
       {/* Logo Section */}
       <div className="mb-12 text-center">
         <div className="mb-4 inline-block">
-          <svg
-            width="64"
-            height="64"
-            viewBox="0 0 64 64"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="drop-shadow-lg"
-          >
-            <circle cx="32" cy="32" r="28" stroke="currentColor" strokeWidth="2" />
-            <path
-              d="M24 28C24 25 26 23 29 23C32 23 34 25 34 28M34 28V36C34 38.2 35.8 40 38 40H42C44.2 40 46 38.2 46 36V32"
-              stroke="currentColor"
-              strokeWidth="2"
-              fill="none"
-            />
-            <circle cx="24" cy="44" r="2" fill="currentColor" />
-            <circle cx="32" cy="44" r="2" fill="currentColor" />
-            <circle cx="40" cy="44" r="2" fill="currentColor" />
-          </svg>
+          <img 
+            src="/logo.svg" 
+            alt="AI Club Logo" 
+            width={128} 
+            height={128} 
+            className="drop-shadow-lg mx-auto"
+          />
         </div>
         <h1 className="text-4xl md:text-6xl font-bold text-white mb-2">
           Bejaia School Of AI

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getAllQuizQuestionsForClient } from '@/lib/quiz-utils';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { TEST_MODE } from '../test';
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,8 +16,7 @@ export async function GET(request: NextRequest) {
     // Fetch all quiz questions from the database for client use (already without correct answers)
     const allQuestions = await getAllQuizQuestionsForClient();
 
-    // Hardcoded test mode - set to true to enable test mode, false to disable
-    const testMode = true; // Change this to false to disable test mode
+    const testMode = TEST_MODE; // Use the common test mode variable
 
     let questions = allQuestions;
 

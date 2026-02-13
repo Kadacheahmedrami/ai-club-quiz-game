@@ -9,9 +9,9 @@ const _geist = Geist({ subsets: ['latin'] })
 const _geistMono = Geist_Mono({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'AI Club Quiz | Bejaia School of AI',
+  title: 'School of AI Club Quiz Game',
   description: 'Welcome to the Bejaia School of AI Club! Test your knowledge about Artificial Intelligence with our interactive quiz game. Think Deeper • Do Better',
-  generator: 'v0.app',
+  
 }
 
 export const viewport: Viewport = {

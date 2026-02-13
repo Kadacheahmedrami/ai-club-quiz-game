@@ -36,7 +36,7 @@ export default function QuizGame({ userId }: QuizGameProps) {
   useEffect(() => {
     // Restore state from localStorage if available
     const savedState = loadQuizState();
-    
+
     if (savedState && savedState.questions.length > 0) {
       // If we have saved state, use it
       setGameState(savedState.gameState);
@@ -243,7 +243,7 @@ export default function QuizGame({ userId }: QuizGameProps) {
 
       // Move to results screen after attempting submission
       setGameState('results');
-      
+
       // Save state to localStorage after setting game state to results
       saveQuizState({
         gameState: 'results',
@@ -251,13 +251,14 @@ export default function QuizGame({ userId }: QuizGameProps) {
         score,
         questions,
         answered: newAnswered,
-        answers
+        answers,
+        completedAt: Date.now() // Mark when the quiz was completed
       });
-      
+
       setSubmitting(false); // Reset submitting state
-      
-      // Clear the quiz state after submission since the quiz is complete
-      clearQuizState();
+
+      // Don't clear the quiz state when quiz is completed so user stays on results screen after refresh
+      // Only clear state when user chooses to play again
     }
   }
 
