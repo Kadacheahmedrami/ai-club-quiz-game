@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo",
+    "dev": "node scripts/start-without-url-warning.js dev --turbo",
     "build": "next build",
-    "start": "next start",
+    "start": "node scripts/start-without-url-warning.js start",
     "lint": "next lint",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
