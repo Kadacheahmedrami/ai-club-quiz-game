@@ -81,7 +81,7 @@ const handleShare = () => {
 
 
   return (
-    <div className="min-h-screen flex flex-col opacity-95 items-center justify-center px-4 py-8">
+    <div className="min-h-screen flex flex-col opacity-95 items-center justify-center px-4 ">
       {/* Celebration Animation */}
       <div className="absolute inset-0 pointer-events-none">
         {score === totalQuestions && (
