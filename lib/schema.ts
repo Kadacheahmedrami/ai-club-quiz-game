@@ -75,16 +75,6 @@ export const quizResults = pgTable('quiz_results', {
   date: timestamp('date').defaultNow().notNull(),
 });
 
-export const quizQuestions = pgTable('quiz_questions', {
-  id: serial('id').primaryKey(),
-  question: text('question').notNull(),
-  option1: text('option1').notNull(),
-  option2: text('option2').notNull(),
-  option3: text('option3').notNull(),
-  option4: text('option4').notNull(),
-  correctAnswerIndex: integer('correct_answer_index').notNull(), // 0-3 for the four options
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-});
 
 // Removed quizAnswers table as per requirement - only storing results, not individual answers
 
@@ -101,8 +91,6 @@ export type NewAccount = typeof accounts.$inferInsert;
 export type Session = typeof sessions.$inferSelect;
 export type NewSession = typeof sessions.$inferInsert;
 
-export type QuizQuestion = typeof quizQuestions.$inferSelect;
-export type NewQuizQuestion = typeof quizQuestions.$inferInsert;
 
 export type QuizResult = typeof quizResults.$inferSelect;
 export type NewQuizResult = typeof quizResults.$inferInsert;

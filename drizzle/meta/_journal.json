@@ -15,6 +15,20 @@
       "when": 1770999974172,
       "tag": "0001_deep_iron_lad",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1771068663721,
+      "tag": "0002_real_miss_america",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1771068674308,
+      "tag": "0003_dazzling_santa_claus",
+      "breakpoints": true
     }
   ]
 }
