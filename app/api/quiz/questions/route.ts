@@ -9,7 +9,6 @@ import { eq } from 'drizzle-orm';
 import { SecureEncryption } from '@/lib/encryption-utils';
 import { readQuestionsFromCSV, getRandomQuestions } from '@/lib/csv-utils';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
 export async function GET(request: NextRequest) {
   try {
@@ -32,20 +31,18 @@ export async function GET(request: NextRequest) {
       .limit(1);
 
     if (existingResult.length > 0) {
-      return NextResponse.json({ 
-        error: 'User has already taken the quiz', 
-        alreadyTaken: true 
+      return NextResponse.json({
+        error: 'User has already taken the quiz',
+        alreadyTaken: true
       }, { status: 400 });
     }
 
     // Read questions from CSV file
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
-    const csvFilePath = path.join(__dirname, 'questions.csv');
+    const csvFilePath = path.join(process.cwd(), 'app/api/quiz/questions/questions.csv');
     let allQuestions = readQuestionsFromCSV(csvFilePath);
 
     // Transform the CSV data to match the expected Question interface
-    const questionsForClient = allQuestions.map(({ id, question, option_a, option_b, option_c, option_d, correct_answer_index }) => ({
+    const questionsForClient = allQuestions.map(({ id, question, option_a, option_b, option_c, option_d }) => ({
       id: parseInt(id),
       question,
       options: [option_a, option_b, option_c, option_d]
@@ -67,7 +64,7 @@ export async function GET(request: NextRequest) {
 
     // Encrypt the questions before sending
     const encryptedQuestions = SecureEncryption.encrypt(JSON.stringify({ questions, testMode }));
-    
+
     return NextResponse.json({ data: encryptedQuestions });
   } catch (error) {
     console.error('Error fetching quiz questions:', error);

@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { quizResults, users, quizQuestions } from '@/lib/schema';
+import { quizResults, users } from '@/lib/schema';
 import { eq } from 'drizzle-orm';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { TEST_MODE } from '../test';
 import { isUserRateLimited } from '@/lib/rate-limiter';
 import { SecureEncryption, APIValidator } from '@/lib/encryption-utils';
+import { readQuestionsFromCSV } from '@/lib/csv-utils';
+import path from 'path';
 
 interface AnswerSubmission {
   userId: string | number; // Accept both string and number to handle different client implementations
@@ -31,19 +33,19 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    
+
     // Check if data is encrypted
     if (body.data) {
       try {
         // Decrypt the incoming data
         const decryptedData = SecureEncryption.decrypt(body.data);
         const parsedData = JSON.parse(decryptedData);
-        
+
         // Validate the structure of the decrypted data
         if (!parsedData.userId || !parsedData.answers) {
           return NextResponse.json({ error: 'Invalid encrypted data format' }, { status: 400 });
         }
-        
+
         var { userId, answers } = parsedData;
       } catch (decryptError) {
         console.error('Error decrypting data:', decryptError);
@@ -55,7 +57,7 @@ export async function POST(request: NextRequest) {
       var userIdVar = userId;
       var answersVar = answers;
     }
-    
+
     // Use the variables defined above
     const userIdFinal = userIdVar !== undefined ? userIdVar : userId;
     const answersFinal = answersVar !== undefined ? answersVar : answers;
@@ -92,11 +94,21 @@ export async function POST(request: NextRequest) {
     const validation = APIValidator.validateQuizAnswers(answersFinal);
     if (!validation.isValid) {
       console.error('Validation errors:', validation.errors);
-      return NextResponse.json({ 
-        error: 'Invalid answers format', 
-        details: validation.errors 
+      return NextResponse.json({
+        error: 'Invalid answers format',
+        details: validation.errors
       }, { status: 400 });
     }
+
+    // Read questions from CSV file to validate answers
+    const csvFilePath = path.join(process.cwd(), 'app/api/quiz/questions/questions.csv');
+    const allQuestions = readQuestionsFromCSV(csvFilePath);
+
+    // Create a map of question ID to correct answer index
+    const correctAnswersMap = new Map<number, number>();
+    allQuestions.forEach(q => {
+      correctAnswersMap.set(parseInt(q.id), parseInt(q.correct_answer_index));
+    });
 
     // Total number of questions in the quiz
     let totalQuestions = answersFinal.length;
@@ -122,13 +134,11 @@ export async function POST(request: NextRequest) {
           isCorrect: false
         });
       } else {
-        // Validate the answered question
-        const question = await db.select({
-          correctAnswerIndex: quizQuestions.correctAnswerIndex
-        }).from(quizQuestions).where(eq(quizQuestions.id, answer.questionId)).limit(1);
-
-        if (question.length > 0) {
-          const isCorrect = answer.selectedOption === question[0].correctAnswerIndex;
+        // Validate the answered question using CSV data
+        const correctAnswerIndex = correctAnswersMap.get(answer.questionId);
+        
+        if (correctAnswerIndex !== undefined) {
+          const isCorrect = answer.selectedOption === correctAnswerIndex;
           if (isCorrect) {
             score++;
           }
@@ -139,7 +149,7 @@ export async function POST(request: NextRequest) {
             isCorrect
           });
         } else {
-          // Question not found in database - mark as incorrect
+          // Question not found in CSV - mark as incorrect
           processedAnswers.push({
             questionId: answer.questionId,
             selectedOption: answer.selectedOption,
