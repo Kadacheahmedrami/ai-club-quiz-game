@@ -11,7 +11,7 @@ export default function WelcomeScreen({ onStartQuiz }: WelcomeScreenProps) {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4">
       {/* Logo Section */}
-      <div className="mb-6 text-center">
+      <div className=" text-center">
         <div className="mb-4 inline-block">
           <img
             src="/logo.svg"
