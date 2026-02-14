@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAllQuizQuestionsForClient } from '@/lib/quiz-utils';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { TEST_MODE } from '../test';
+import { isUserRateLimited } from '@/lib/rate-limiter';
 import { db } from '@/lib/db';
 import { quizResults } from '@/lib/schema';
 import { eq } from 'drizzle-orm';
-import { SimpleEncryption } from '@/lib/encryption-utils';
+import { SecureEncryption } from '@/lib/encryption-utils';
+import { readQuestionsFromCSV, getRandomQuestions } from '@/lib/csv-utils';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 export async function GET(request: NextRequest) {
   try {
@@ -15,6 +18,11 @@ export async function GET(request: NextRequest) {
 
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Add rate limiting check
+    if (isUserRateLimited(session.user.id)) {
+      return NextResponse.json({ error: 'Rate limit exceeded. Try again later.' }, { status: 429 });
     }
 
     // Check if the user has already taken the quiz
@@ -30,21 +38,35 @@ export async function GET(request: NextRequest) {
       }, { status: 400 });
     }
 
-    // Fetch all quiz questions from the database for client use (already without correct answers)
-    const allQuestions = await getAllQuizQuestionsForClient();
+    // Read questions from CSV file
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+    const csvFilePath = path.join(__dirname, 'questions.csv');
+    let allQuestions = readQuestionsFromCSV(csvFilePath);
+
+    // Transform the CSV data to match the expected Question interface
+    const questionsForClient = allQuestions.map(({ id, question, option_a, option_b, option_c, option_d, correct_answer_index }) => ({
+      id: parseInt(id),
+      question,
+      options: [option_a, option_b, option_c, option_d]
+      // Note: correct_answer_index is intentionally excluded to prevent cheating
+    }));
 
     const testMode = TEST_MODE; // Use the common test mode variable
 
-    let questions = allQuestions;
+    let questions;
 
     if (testMode) {
       // In test mode, randomly select 3 questions
-      const shuffled = [...allQuestions].sort(() => 0.5 - Math.random());
+      const shuffled = [...questionsForClient].sort(() => 0.5 - Math.random());
       questions = shuffled.slice(0, 3);
+    } else {
+      // Randomly select 40 questions from the full set
+      questions = getRandomQuestions(questionsForClient, 40);
     }
 
     // Encrypt the questions before sending
-    const encryptedQuestions = SimpleEncryption.encrypt(JSON.stringify({ questions, testMode }));
+    const encryptedQuestions = SecureEncryption.encrypt(JSON.stringify({ questions, testMode }));
     
     return NextResponse.json({ data: encryptedQuestions });
   } catch (error) {

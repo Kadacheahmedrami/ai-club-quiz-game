@@ -9,7 +9,7 @@ interface WelcomeScreenProps {
 
 export default function WelcomeScreen({ onStartQuiz }: WelcomeScreenProps) {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center -translate-y-5 px-4">
       {/* Logo Section */}
       <div className=" text-center">
         <div className="mb-4 inline-block">

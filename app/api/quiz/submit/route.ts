@@ -5,7 +5,8 @@ import { eq } from 'drizzle-orm';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { TEST_MODE } from '../test';
-import { SimpleEncryption, APIValidator } from '@/lib/encryption-utils';
+import { isUserRateLimited } from '@/lib/rate-limiter';
+import { SecureEncryption, APIValidator } from '@/lib/encryption-utils';
 
 interface AnswerSubmission {
   userId: string | number; // Accept both string and number to handle different client implementations
@@ -24,13 +25,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Add rate limiting check
+    if (isUserRateLimited(session.user.id)) {
+      return NextResponse.json({ error: 'Rate limit exceeded. Try again later.' }, { status: 429 });
+    }
+
     const body = await request.json();
     
     // Check if data is encrypted
     if (body.data) {
       try {
         // Decrypt the incoming data
-        const decryptedData = SimpleEncryption.decrypt(body.data);
+        const decryptedData = SecureEncryption.decrypt(body.data);
         const parsedData = JSON.parse(decryptedData);
         
         // Validate the structure of the decrypted data
@@ -157,7 +163,7 @@ export async function POST(request: NextRequest) {
     }).returning();
 
     // Encrypt the response
-    const encryptedResponse = SimpleEncryption.encrypt(JSON.stringify({
+    const encryptedResponse = SecureEncryption.encrypt(JSON.stringify({
       success: true,
       score,
       totalQuestions,

@@ -128,8 +128,8 @@ export default function QuizGame({ userId }: QuizGameProps) {
                     // Decrypt the response
                     if (data.data) {
                       try {
-                        const { SimpleEncryption } = await import('../lib/encryption-utils');
-                        const decryptedData = SimpleEncryption.decrypt(data.data);
+                        const { SecureEncryption } = await import('../lib/encryption-utils');
+                        const decryptedData = SecureEncryption.decrypt(data.data);
                         const parsedData = JSON.parse(decryptedData);
                         
                         const fetchedQuestions = parsedData.questions;
@@ -329,8 +329,8 @@ export default function QuizGame({ userId }: QuizGameProps) {
         // Encrypt the submission data
         let encryptedData;
         try {
-          const { SimpleEncryption } = await import('../lib/encryption-utils');
-          encryptedData = SimpleEncryption.encrypt(JSON.stringify({
+          const { SecureEncryption } = await import('../lib/encryption-utils');
+          encryptedData = SecureEncryption.encrypt(JSON.stringify({
             userId: authenticatedUserId,
             answers: submissionData
           }));
@@ -405,8 +405,8 @@ export default function QuizGame({ userId }: QuizGameProps) {
         let result;
         if (responseData.data) {
           try {
-            const { SimpleEncryption } = await import('../lib/encryption-utils');
-            const decryptedData = SimpleEncryption.decrypt(responseData.data);
+            const { SecureEncryption } = await import('../lib/encryption-utils');
+            const decryptedData = SecureEncryption.decrypt(responseData.data);
             result = JSON.parse(decryptedData);
           } catch (error) {
             console.error('Error decrypting submission response:', error);
@@ -496,8 +496,8 @@ export default function QuizGame({ userId }: QuizGameProps) {
         // Encrypt the submission data
         let encryptedData;
         try {
-          const { SimpleEncryption } = await import('../lib/encryption-utils');
-          encryptedData = SimpleEncryption.encrypt(JSON.stringify({
+          const { SecureEncryption } = await import('../lib/encryption-utils');
+          encryptedData = SecureEncryption.encrypt(JSON.stringify({
             userId: authenticatedUserId,
             answers: submissionData
           }));

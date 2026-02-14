@@ -1,59 +1,32 @@
+import { createHmac } from 'crypto';
 import { Buffer } from 'buffer';
 
-// Simple XOR-based encryption utility for obfuscating data
-// Note: This is not cryptographically secure but serves to obfuscate data in transit
-export class SimpleEncryption {
-  // Public key for XOR encryption - makes it harder to understand the API calls
-  private static readonly KEY = 'sa7a-mortada-good-luck-hacking-the-website-try-deashboad-or-leaderboard-routes'; // Public key for obfuscation
-
-  /**
-   * Encrypts a string using XOR cipher with a rotating key
-   */
+// Secure encryption utility with HMAC verification
+export class SecureEncryption {
   static encrypt(text: string): string {
-    const key = this.KEY;
-    let result = '';
-    
-    for (let i = 0; i < text.length; i++) {
-      const charCode = text.charCodeAt(i);
-      const keyChar = key.charCodeAt(i % key.length);
-      const encryptedCharCode = charCode ^ keyChar;
-      result += String.fromCharCode(encryptedCharCode);
-    }
-    
-    // Convert to base64 to ensure safe transmission
-    return Buffer.from(result, 'utf-16le').toString('base64');
+    const secret = process.env.ENCRYPTION_SECRET || 'fallback-secret-key-change-me';
+    const hmac = createHmac('sha256', secret);
+    hmac.update(text);
+    const hash = hmac.digest('hex');
+    return JSON.stringify({ data: Buffer.from(text).toString('base64'), hash });
   }
 
-  /**
-   * Decrypts a string using XOR cipher with a rotating key
-   */
   static decrypt(encryptedText: string): string {
-    const key = this.KEY;
-    
-    // Convert from base64
-    const decoded = Buffer.from(encryptedText, 'base64').toString('utf-16le');
-    
-    let result = '';
-    
-    for (let i = 0; i < decoded.length; i++) {
-      const charCode = decoded.charCodeAt(i);
-      const keyChar = key.charCodeAt(i % key.length);
-      const decryptedCharCode = charCode ^ keyChar;
-      result += String.fromCharCode(decryptedCharCode);
-    }
-    
-    return result;
-  }
-  
-  /**
-   * Validates if the encrypted data appears to be properly formatted
-   */
-  static isValidEncryptedFormat(data: string): boolean {
     try {
-      // Check if it's a valid base64 string
-      return /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(data);
+      const secret = process.env.ENCRYPTION_SECRET || 'fallback-secret-key-change-me';
+      const { data, hash } = JSON.parse(encryptedText);
+      const decodedText = Buffer.from(data, 'base64').toString();
+      
+      const hmac = createHmac('sha256', secret);
+      hmac.update(decodedText);
+      const computedHash = hmac.digest('hex');
+      
+      if (hash === computedHash) {
+        return decodedText;
+      }
+      throw new Error('Integrity check failed');
     } catch {
-      return false;
+      return '';
     }
   }
 }
@@ -61,17 +34,17 @@ export class SimpleEncryption {
 // Browser-compatible encryption
 export class BrowserEncryption {
   /**
-   * Encrypts a string using XOR-based encryption
+   * Encrypts a string using secure encryption
    */
   static async encrypt(text: string): Promise<string> {
-    return SimpleEncryption.encrypt(text);
+    return SecureEncryption.encrypt(text);
   }
 
   /**
-   * Decrypts a string using XOR-based encryption
+   * Decrypts a string using secure encryption
    */
   static async decrypt(encryptedText: string): Promise<string> {
-    return SimpleEncryption.decrypt(encryptedText);
+    return SecureEncryption.decrypt(encryptedText);
   }
 }
 
