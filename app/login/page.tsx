@@ -19,7 +19,7 @@ export default async function LoginPage() {
 
         <div className="space-y-4">
            <GoogleLoginButton />
-          <GithubLoginButton />
+     
 
         </div>
 
