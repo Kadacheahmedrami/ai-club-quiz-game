@@ -34,13 +34,13 @@ export default function WelcomeScreen({ onStartQuiz }: WelcomeScreenProps) {
         <div className="bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-xl border border-cyan-500/30 rounded-2xl p-8 shadow-2xl">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-white mb-3">
-              Welcome to AI Club!
+              Welcome to SOA Club!
             </h2>
             <p className="text-gray-300 mb-2">
               Test your knowledge about Artificial Intelligence
             </p>
             <p className="text-cyan-400 text-sm">
-              20 questions • 20 seconds each
+              40 questions • 20 seconds each • 1 chance only
             </p>
           </div>
 
@@ -69,7 +69,6 @@ export default function WelcomeScreen({ onStartQuiz }: WelcomeScreenProps) {
             Start Quiz
           </Button>
           
-    
           {/* Footer */}
           <p className="text-center text-gray-400 text-sm mt-6">
             Good luck! 🚀
