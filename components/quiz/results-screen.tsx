@@ -84,32 +84,35 @@ const handleShare = () => {
 
   const handleInstagramShare = async () => {
     if (!resultsContainerRef.current) return;
-    
+
     setIsGeneratingImage(true);
-    
+
     try {
-      // Temporarily remove backdrop blur for better screenshot quality
-      const container = resultsContainerRef.current;
-      const originalBackdrop = container.style.backdropFilter;
-      container.style.backdropFilter = 'none';
-      
+      // Hide the Instagram share button temporarily for the screenshot
+      const instagramButton = resultsContainerRef.current.querySelector('.instagram-share-button');
+      if (instagramButton) {
+        (instagramButton as HTMLElement).style.display = 'none';
+      }
+
       const canvas = await html2canvas(resultsContainerRef.current, {
         backgroundColor: '#1e293b', // slate-800 color
         scale: 2, // Higher resolution for better quality
         useCORS: true,
         allowTaint: true
       });
-      
-      // Restore backdrop blur
-      container.style.backdropFilter = originalBackdrop;
-      
+
+      // Show the Instagram share button again after taking the screenshot
+      if (instagramButton) {
+        (instagramButton as HTMLElement).style.display = 'flex';
+      }
+
       const imageBlob = await new Promise<Blob>((resolve) => {
         canvas.toBlob((blob) => {
           if (blob) resolve(blob);
           else throw new Error('Failed to create blob from canvas');
         }, 'image/png');
       });
-      
+
       // Create a temporary link to download the image
       const url = URL.createObjectURL(imageBlob);
       const link = document.createElement('a');
@@ -119,7 +122,7 @@ const handleShare = () => {
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-      
+
       // Show a message to the user about sharing on Instagram
       alert('Screenshot saved! Open Instagram, create a new story, tap the sticker icon, select "Upload", and choose this image to share your result!');
     } catch (error) {
@@ -195,7 +198,7 @@ const handleShare = () => {
             <Button
               onClick={handleInstagramShare}
               disabled={isGeneratingImage}
-              className="w-full py-6 bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white font-bold text-lg rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+              className="w-full py-6 bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white font-bold text-lg rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 instagram-share-button"
             >
               <InstagramIcon size={24} />
               {isGeneratingImage ? 'Generating...' : 'Share on Instagram'}
