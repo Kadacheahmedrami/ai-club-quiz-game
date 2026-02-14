@@ -23,20 +23,20 @@ export const metadata: Metadata = {
     siteName: 'AI Club Quiz Game',
     images: [
       {
-        url: '/cover.png',
+        url: 'https://school-of-ai.estin.pro/cover.png',
         width: 1200,
         height: 630,
         alt: 'AI Club Quiz Game Cover Image',
       },
     ],
-    locale: 'en_US',
+    locale: 'en_DZ',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'AI Club Quiz Game - Test Your AI Knowledge',
+    title: 'School of AI QUIZ Game - Test Your AI Knowledge And Win Prizes !',
     description: 'Challenge yourself with our interactive quiz about Artificial Intelligence. Join the Bejaia School of AI Club and test your knowledge today!',
-    images: ['/cover.png'],
+    images: ['https://school-of-ai.estin.pro/cover.png'],
   },
   robots: {
     index: true,
