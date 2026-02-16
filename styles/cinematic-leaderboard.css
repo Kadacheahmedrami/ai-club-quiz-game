@@ -1,0 +1,74 @@
+/* globals.css - Additional styles for the cinematic leaderboard */
+
+/* Add gradient radial utility for the background effect */
+.bg-gradient-radial {
+  background: radial-gradient(circle, var(--tw-gradient-stops));
+}
+
+/* Custom scrollbar for a premium feel */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #D4AF37, #b8860b);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #D4AF37;
+}
+
+/* Animation for page load fade-in */
+.fade-in {
+  animation: fadeIn 1.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Card hover effect enhancement */
+.card-hover-enhance:hover {
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: 0 20px 40px rgba(212, 175, 55, 0.3);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Spotlight intensification effect */
+.spotlight-intensify {
+  animation: spotlightIntensify 1s ease-out;
+}
+
+@keyframes spotlightIntensify {
+  0% { opacity: 0.1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 0.1; }
+}
+
+/* Golden particle explosion effect */
+.particle-explosion {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: #D4AF37;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .responsive-padding {
+    padding: 1rem;
+  }
+  
+  .responsive-text {
+    font-size: 0.9rem;
+  }
+}

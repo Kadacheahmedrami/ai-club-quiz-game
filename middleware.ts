@@ -160,8 +160,11 @@ export default function middleware(req: NextRequest) {
     req.nextUrl.pathname.startsWith(path)
   );
 
+  // Check if user is trying to access the dashboard (special protection)
+  const isDashboardRoute = req.nextUrl.pathname.startsWith('/dashboard');
+
   // If it's a protected route, check authentication
-  if (isProtectedRoute) {
+  if (isProtectedRoute || isDashboardRoute) {
     // Use NextAuth's getToken helper to check if user is authenticated
     const token = req.cookies.get('__Secure-next-auth.session-token') ||
                   req.cookies.get('next-auth.session-token');
@@ -181,6 +184,12 @@ export default function middleware(req: NextRequest) {
         return NextResponse.redirect(url);
       }
     }
+  }
+
+  // Special handling for dashboard route - only allow specific user
+  if (isDashboardRoute) {
+    // In a real implementation, you would decode and verify the JWT token
+    // For this example, we'll assume the token is valid and check the user in the page component
   }
 
   // Check if user is trying to access the quiz page
