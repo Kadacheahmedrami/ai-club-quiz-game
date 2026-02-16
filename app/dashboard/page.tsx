@@ -16,7 +16,7 @@ export default async function DashboardPage() {
   }
 
   // Server-side authorization check - only allow specific users
-  const allowedEmails = ['a_kadache@estin.dz'];
+  const allowedEmails = ['a_kadache@estin.dz','z_tikialine@estin.dz','schoolofai@estin.dz'];
   
   if (!session.user?.email || !allowedEmails.includes(session.user.email)) {
     redirect('/');

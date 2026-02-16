@@ -10,7 +10,7 @@ export async function GET() {
     // Check if the requesting user is authorized to access this data
     const session = await getServerSession(authOptions);
 
-    if (!session || (session.user?.email !== 'a_kadache@estin.dz' && session.user?.email !== 'aizen.souls.king@gmail.com')) {
+    if (!session || (session.user?.email !== 'a_kadache@estin.dz' && session.user?.email !== 'z_tikialine@estin.dz' && session.user?.email !== 'schoolofai@estin.dz')) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
