@@ -1,41 +1,41 @@
 id,question,option_a,option_b,option_c,option_d,correct_answer_index
-1,What does AI stand for?,Advanced Internet,Artificial Intelligence,Automated Input,,1
-2,Who is known as the Father of AI?,John McCarthy,Bill Gates,Elon Musk,,0
-3,What is the term for AI that can only do one specific task?,Strong AI,Narrow AI,Super AI,,1
-4,Which test determines if a machine can think like a human?,IQ Test,Turing Test,Stress Test,,1
-5,What is the most popular programming language for AI?,HTML,C++,Python,,2
-6,AI that could perform any intellectual task a human can is called:,AGI (General AI),Narrow AI,Reactive AI,,0
-7,What do we call the information used to teach an AI?,Training Data,Memory Chips,Software Updates,,0
-8,True or False: Most AI today (like Siri) is General AI.,True,False,Unknown,,1
-9,Which of these is a common use for AI?,Cooking a physical egg,Recommending movies,Hammering a nail,,1
-10,What is an Algorithm in AI?,A set of rules or instructions,A type of computer screen,A battery for robots,,0
-11,Which AI field mimics the human brain?,Robotics,Neural Networks,Cloud Computing,,1
-12,What is Machine Learning?,Machines fixing themselves,Computers learning from data,Building a PC,,1
-13,Learning with labeled data is called:,Supervised Learning,Unsupervised Learning,Random Learning,,0
-14,What is a Hidden Layer?,A layer in a neural network,A secret computer password,A physical part of a hard drive,,0
-15,What does NLP stand for?,Normal Logic Program,Natural Language Processing,Net Level Protocol,,1
-16,Which learning style uses rewards and penalties?,Reinforcement Learning,Supervised Learning,Deep Learning,,0
-17,What is Computer Vision?,AI interpreting images,Wearing VR goggles,Cleaning a monitor,,0
-18,Deep Learning is a subset of what?,Blockchain,Machine Learning,Web Design,,1
-19,What is Unsupervised Learning used for?,Finding hidden patterns,Following strict labels,Giving specific rewards,,0
-20,What is Big Data?,A heavy hard drive,Massive sets of information,A large computer case,,1
-21,What does Generative AI create?,New content like text and images,Electrical power,Physical hardware,,0
-22,What does LLM stand for?,Long Logic Machine,Large Language Model,Local Link Method,,1
-23,Who created ChatGPT?,Google,OpenAI,Meta,,1
-24,The text you give an AI to get a response is a:,Code,Prompt,Script,,1
-25,When AI makes up false information it is called:,Dreaming,Hallucinating,Buffering,,1
-26,What is the name of Google's AI?,Gemini,Alexa,Siri,,0
-27,What is a Chatbot?,A talking robot,A text-based AI conversationalist,A spam email,,1
-28,Which model is used to create images from text?,GPT-4,DALL-E,Excel,,1
-29,What are Tokens in AI?,Digital coins,Small units of text or words,Hardware keys,,1
-30,What is Multimodal AI?,AI that can use text and images,AI that works in many rooms,AI that has many batteries,,0
-31,What is AI Bias?,Unfair or skewed results,A fast internet connection,A type of computer virus,,0
-32,A fake video created by AI is called a:,Deepfake,Photoswap,AI-Movie,,0
-33,Which is an example of AI in everyday life?,FaceID on phones,Reading a paper book,Using a manual toothbrush,,0
-34,What is Predictive Text?,Guessing the next word you type,Reading your mind,Writing a whole book for you,,0
-35,The point where AI exceeds human intelligence is:,The Peak,The Singularity,The Endgame,,1
-36,What is an Autonomous vehicle?,A flying car,A self-driving car,A car that uses gas,,1
-37,Why is data privacy important in AI?,To protect personal info,To make AI run faster,To save battery life,,0
-38,Can AI feel real human emotions?,Yes,No,Only on weekends,,1
-39,AI used in medicine can help with:,Diagnosing diseases,Performing surgery alone,Paying medical bills,,0
-40,What is Prompt Engineering?,Building computer parts,Crafting better AI instructions,Fixing a broken screen,,1
+1,What does AI stand for?,Advanced Internet,Artificial Intelligence,Automated Input,Algorithmic Interface,1
+2,Who is known as the Father of AI?,Bill Gates,Elon Musk,John McCarthy,Steve Jobs,2
+3,What is the term for AI that can only do one specific task?,Super AI,General AI,Strong AI,Narrow AI,3
+4,Which test determines if a machine can think like a human?,Stress Test,IQ Test,Speed Test,Turing Test,3
+5,What is the most popular programming language for AI?,HTML,Java,C++,Python,3
+6,AI that could perform any intellectual task a human can is called:,Narrow AI,Reactive AI,Super AI,AGI (General AI),3
+7,What do we call the information used to teach an AI?,Software Updates,Memory Chips,Hardware Drivers,Training Data,3
+8,True or False: Most AI today like Siri is General AI.,Definitely True,Sometimes True,Unknown,False,3
+9,Which of these is a common use for AI?,Hammering a nail,Cooking a physical egg,Watering plants,Recommending movies,3
+10,What is an Algorithm in AI?,A battery for robots,A type of computer screen,A hardware component,A set of rules or instructions,3
+11,Which AI field mimics the human brain?,Cloud Computing,Robotics,Cybersecurity,Neural Networks,3
+12,What is Machine Learning?,Building a PC,Machines fixing themselves,Installing software,Computers learning from data,3
+13,Learning with labeled data is called:,Random Learning,Deep Learning,Unsupervised Learning,Supervised Learning,3
+14,What is a Hidden Layer?,A physical part of a hard drive,A secret computer password,A type of storage,A layer inside a neural network,3
+15,What does NLP stand for?,Net Level Protocol,Normal Logic Program,New Learning Process,Natural Language Processing,3
+16,Which learning style uses rewards and penalties?,Deep Learning,Supervised Learning,Unsupervised Learning,Reinforcement Learning,3
+17,What is Computer Vision?,Cleaning a monitor,Wearing VR goggles,Adjusting screen brightness,AI interpreting and understanding images,3
+18,Deep Learning is a subset of what?,Web Design,Blockchain,Cybersecurity,Machine Learning,3
+19,What is Unsupervised Learning used for?,Giving specific rewards,Following strict labels,Memorizing answers,Finding hidden patterns in data,3
+20,What is Big Data?,A large computer case,A heavy hard drive,A big monitor screen,Massive sets of information too big for normal tools,3
+21,What does Generative AI create?,Physical hardware,Electrical power,Internet connections,New content like text and images,3
+22,What does LLM stand for?,Local Link Method,Low Level Memory,Long Logic Machine,Large Language Model,3
+23,Who created ChatGPT?,Apple,Meta,Google,OpenAI,3
+24,The text you give an AI to get a response is called a:,Script,Command,Code,Prompt,3
+25,When AI confidently makes up false information it is called:,Buffering,Crashing,Dreaming,Hallucinating,3
+26,What is the name of Google's AI assistant?,Siri,Cortana,Alexa,Gemini,3
+27,What is a Chatbot?,A spam email,A physical robot,A search engine,A text-based AI you can have a conversation with,3
+28,Which AI model is used to create images from text?,Excel,Word,GPT-4,DALL-E,3
+29,What are Tokens in AI?,Hardware keys,Digital coins,Encryption codes,Small units of text like words or parts of words,3
+30,What is Multimodal AI?,AI that has many batteries,AI that works in many rooms,AI that speaks many languages,AI that can process both text and images,3
+31,What is AI Bias?,A type of computer virus,A fast internet connection,A programming error,When AI produces unfair or skewed results due to bad training data,3
+32,A fake video of a real person created by AI is called a:,AI-Movie,Photoswap,Viral Video,Deepfake,3
+33,Which is an example of AI in everyday life?,Using a manual toothbrush,Reading a paper book,Writing with a pen,FaceID unlocking your phone,3
+34,What is Predictive Text?,Writing a whole book for you,Correcting your grammar,Reading your mind,Guessing the next word you are about to type,3
+35,The point where AI exceeds human intelligence is called:,The Endgame,The Breakthrough,The Peak,The Singularity,3
+36,What is an Autonomous vehicle?,A car that uses only gas,A very fast car,A flying car,A self-driving car powered by AI,3
+37,Why is data privacy important in AI?,To save battery life,To make AI run faster,To improve graphics,To protect people's personal information,3
+38,Can AI feel real human emotions?,Only negative ones,Only happiness,Yes completely,No,3
+39,AI used in medicine can help with:,Paying medical bills,Performing surgery completely alone,Replacing all doctors,Diagnosing diseases faster and more accurately,3
+40,What is Prompt Engineering?,Fixing a broken screen,Building computer hardware,Writing code,Crafting better instructions to get the best responses from an AI,3
