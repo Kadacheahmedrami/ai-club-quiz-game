@@ -1,101 +1,41 @@
 id,question,option_a,option_b,option_c,option_d,correct_answer_index
-1,"What does AI stand for?","Automated Interface","Artificial Intelligence","Advanced Internet","Automatic Input",1
-2,"Which programming language is most commonly used to build AI programs?","Python","HTML","Excel","Java",0
-3,"In supervised learning, how does the computer learn?","By guessing randomly","By watching movies","From examples that already have correct answers","By searching the internet",2
-4,"Which method is used to group similar things together automatically?","K-Means Clustering","Addition","Subtraction","Spell-check",0
-5,"What does NLP stand for?","Natural Language Processing","New Laptop Program","Network Link Protocol","Normal Learning Path",0
-6,"Which type of AI model is best at recognizing images and photos?","Spreadsheet Model","CNN (Convolutional Neural Network)","Calculator Model","Email Filter",1
-7,"What is overfitting? (When a student memorizes answers but can't solve new problems — this is the AI version)","The model works perfectly on everything","The model crashes","The model memorizes training data but fails on new data","The model is too small",2
-8,"What kind of math problem is 'classification' in AI? (picking a category)","Multiplication","Sorting things into groups like spam vs not-spam","Drawing graphs","Counting words",1
-9,"In machine learning, what is a 'feature'?","The price of a model","A piece of input information used to make a prediction","A type of error","A programming language",1
-10,"What does an 'optimizer' do in AI training?","Deletes old data","Speeds up your internet","Adjusts the model step-by-step to make it more accurate","Formats text",2
-11,"What does CNN stand for in AI?","Computer Network Node","Convolutional Neural Network","Central News Network","Coded Numeric Node",1
-12,"What is 'dropout' in AI training?","When the program crashes","Randomly turning off some parts of the network during training to prevent memorization","Deleting old data","Logging out of a system",1
-13,"What is transfer learning? (Think: a pianist learning guitar faster because they already know music)","Starting from zero every time","Using knowledge from one task to help with a different task","Sharing data between two computers","Copying someone else's model",1
-14,"Which score combines both precision and recall into one number?","WiFi Score","F1 Score","Battery Score","Screen Score",1
-15,"Why do AI researchers use GPUs (graphics cards)?","To display better visuals","To store more files","To do many calculations at the same time, much faster than a regular CPU","To connect to the internet faster",2
-16,"Which of these is an example of unsupervised learning? (no correct answers given to the AI)","Predicting house prices from labeled data","Spam detection with labeled emails","Grouping customers by shopping habits without labels","Recognizing faces from tagged photos",2
-17,"What is a confusion matrix used for?","Confusing students","Storing passwords","Showing how many correct and incorrect predictions a model made","Designing web pages",2
-18,"What is data augmentation? (Like practicing the same song in different keys)","Deleting extra data","Paying people to collect more data","Creating new training examples by slightly changing existing ones (e.g., flipping images)","Changing the model size",2
-19,"Which activation function outputs zero for negative values and is very popular in deep learning?","Sigmoid","Tanh","ReLU","Softmax",2
-20,"What is the purpose of batch normalization?","To make data smaller","To make training more stable by normalizing values between layers","To encrypt the model","To add more layers",1
-21,"Which algorithm tries to find the best dividing line between two groups of data?","K-Means","SVM (Support Vector Machine)","PCA","Random Forest",1
-22,"In AI training, what is an 'epoch'?","One single prediction","The size of the dataset","One complete pass through all the training data","The number of layers in a model",2
-23,"What is early stopping? (Like stopping practice once you've peaked, so you don't burn out)","Stopping after one batch","Stopping data collection early","Stopping training when the model stops improving, to avoid overfitting","Stopping the computer",2
-24,"What do ensemble methods do?","Use one very large model","Combine many smaller models together to make better predictions","Remove features from data","Speed up the GPU",1
-25,"Which is a popular AI algorithm that wins many data science competitions?","Spell-checker","Google Maps","XGBoost","Microsoft Word",2
-26,"What is a word embedding?","A word that fits perfectly in a sentence","Turning words into numbers so a computer can understand them","A grammar rule","A type of font",1
-27,"Which AI model architecture became very important for language tasks like translation and chatbots?","CNN","Spreadsheet","Transformer","Calculator",2
-28,"What is tokenization in NLP?","Encrypting text","Breaking text into smaller pieces like words or parts of words","Making text louder","Compressing text into an image",1
-29,"What does 'precision' measure in AI?","How fast the model runs","How big the model is","Out of all the things the model said were positive, how many actually were","How many layers the model has",2
-30,"What does PCA help with?","Adding more data","Removing missing values","Reducing the number of features while keeping the most important information","Encrypting data",2
-31,"What is fine-tuning a pre-trained model?","Building a model from scratch","Taking an already-trained model and training it a little more on your specific data","Deleting old weights","Compressing the model",1
-32,"What is 'random search' in hyperparameter tuning?","Trying all possible combinations","Letting the computer randomly try different settings to find good ones","Asking a human to guess","Always using default settings",1
-33,"What is zero-shot learning? (Like asking someone who has never seen a dog to identify it from a description)","Training with zero data at all","A model that returns nothing","A model that can handle new tasks it was never directly trained on","A model with no layers",2
-34,"What is concept drift?","When a concept is confusing","When the AI gets bored","When real-world data changes over time and the model becomes less accurate","When the gradient disappears",2
-35,"What does L1 regularization do?","Makes the model bigger","Makes some weights become exactly zero (removes unimportant features)","Speeds up training","Adds noise to data",1
-36,"What is a GAN? (One AI tries to create fake images, another tries to spot the fakes)","A type of database","A Generative Adversarial Network — two models competing to create realistic content","A graph analysis tool","A type of optimizer",1
-37,"What is a diffusion model used for?","Sorting data","Compressing files","Generating new images or audio from noise","Measuring accuracy",2
-38,"What is self-supervised learning?","Learning with full human labels","Learning by creating its own training signals from the data (no human labels needed)","Learning only from rewards","Testing without training",1
-39,"Which type of model is designed to handle sequences like sentences or time series data?","CNN","PCA","LSTM/GRU","K-Means",2
-40,"What is beam search used for?","Finding the best image","Picking the best sequence of words when generating text","Normalizing data","Training faster",1
-41,"What is 'temperature' in AI text generation?","How hot the GPU gets","The physical temperature of the server","A setting that controls how creative or random the AI's text output is","The size of the vocabulary",2
-42,"What is top-p sampling?","Always picking the most likely word","A method that picks from a smart group of the most probable words","A regularization method","A way to compress models",1
-43,"What makes BERT and GPT embeddings different from older methods?","They are smaller","They are the same for every word","They change based on the context the word is used in","They only work for numbers",2
-44,"Why do transformers use positional encoding?","To normalize inputs","To compress the model","Because transformers don't process words in order, they need to be told the position of each word","To speed up training",2
-45,"Which metrics are better than simple accuracy when your dataset has unequal class sizes?","Batch size and learning rate","F1 Score and ROC AUC","Number of layers and epochs","Training time and model size",1
-46,"What is the precision-recall tradeoff?","A tradeoff between CPU and GPU","When you improve precision, recall tends to drop and vice versa","A tradeoff between model size and speed","A choice between two datasets",1
-47,"What is model pruning?","Adding new layers","Making the model more complex","Removing unnecessary parts of a model to make it smaller and faster","Changing the training data",2
-48,"Which file format is commonly used to share AI models between different frameworks?","ONNX","CSV","JPEG","TXT",0
-49,"What is quantization in AI?","Making data larger","Using lower precision numbers to make models smaller and faster to run","Encrypting model weights","Adding more parameters",1
-50,"What is the exploration vs exploitation dilemma in reinforcement learning?","Whether to use GPU or CPU","Choosing between using what you know works vs trying new things to find something better","Precision vs recall","Overfitting vs underfitting",1
-51,"What is Q-learning?","A supervised learning method","A way to cluster data","A reinforcement learning method where an AI learns the value of actions in different situations","A type of optimizer",2
-52,"In reinforcement learning, what is a 'policy'?","A dataset of rules","A loss function","The strategy the AI uses to decide what action to take in each situation","A metric for accuracy",2
-53,"What are policy gradient methods used for?","Clustering data","Directly training an AI to choose better actions by adjusting its policy based on rewards","Normalizing inputs","Finding nearest neighbors",1
-54,"What is the actor-critic method in reinforcement learning?","A two-player video game","A visualization tool","A combined approach where one part (actor) picks actions and another (critic) judges how good they were","A data cleaning method",2
-55,"What is LIME or SHAP used for?","Speeding up training","Reducing model size","Helping humans understand why an AI made a specific prediction","Augmenting data",2
-56,"What does 'AI explainability' mean?","Making code run faster","Getting higher accuracy","Being able to understand and explain why an AI made a certain decision","Reducing the model's file size",2
-57,"Which tools are most popular for building deep learning models in Python?","Excel and Word","TensorFlow and PyTorch","Ruby on Rails and Django","Photoshop and Illustrator",1
-58,"What is ensemble averaging?","Averaging your data","Averaging multiple models' predictions to get a more reliable result","Using one very large model","Training the same model twice",1
-59,"Which technique is used to visualize high-dimensional data in 2D?","Dropout","BatchNorm","t-SNE / UMAP","Linear Regression",2
-60,"What is backpropagation?","A way to collect data","A way to display outputs","The algorithm that calculates how much each part of the model contributed to the error and adjusts weights","A hyperparameter search method",2
-61,"What is the vanishing gradient problem?","When the computer overheats","When gradients become so tiny in deep networks that early layers barely learn","When the dataset is too small","When the batch size is too large",1
-62,"What is the main advantage of transfer learning?","It always needs more data","It makes models bigger","You can get great results faster using less data by starting from a pre-trained model","It always performs worse",2
-63,"What does a K-Nearest Neighbors (KNN) algorithm do?","Divides data into two groups with a line","Groups data by proximity in clusters","Classifies a new point based on the majority label of its closest neighbors","Builds a decision tree",2
-64,"What is cross-validation used for?","Making the model bigger","Encrypting labels","Reliably estimating how well a model will perform on new data","Normalizing features",2
-65,"What is the attention mechanism in a transformer?","A pooling layer","A type of convolution","A mechanism that lets the model focus on the most relevant parts of the input when making a prediction","A softmax layer",2
-66,"What does the softmax function do?","Normalizes feature values","Converts the model's raw scores into probabilities that add up to 100%","Calculates the loss","Applies dropout",1
-67,"What does an ROC curve show?","How the loss changes over time","The tradeoff between correctly identifying positives vs incorrectly flagging negatives","How precision changes with recall","How training accuracy improves",1
-68,"What is 'embedding dimension'?","The batch size","The size of the number vector used to represent a word or object","The number of output classes","The number of training epochs",1
-69,"What is Byte-Pair Encoding (BPE)?","Splitting text only by spaces","A grammar correction method","A popular method for breaking words into smaller sub-word pieces for language models","A way to compress images",2
-70,"What is few-shot learning?","Training on millions of examples","A method only for image recognition","Teaching a model to handle a new task using just a handful of examples","Using zero labeled examples",2
-71,"What is quantization? (simpler version)","Adding more layers","Making a model use less memory by storing numbers with fewer decimal places","Training longer","Using more GPUs",1
-72,"What is model drift?","When you need more regularization","When the model stops saving","When a model's accuracy gets worse over time because the real world has changed","When the model gets too large",2
-73,"Which Python library is most used for working with arrays and numbers in data science?","Pandas","Flask","NumPy","Express",2
-74,"What's the difference between an epoch and a batch?","They are the same thing","An epoch is one batch of data","An epoch is one full pass through all training data; a batch is a small chunk processed at a time","A batch is larger than an epoch",2
-75,"What is a Random Forest?","A type of clustering","A single very deep decision tree","A collection of many decision trees that vote together for a final answer","A neural network for images",2
-76,"What is gradient clipping used for?","Increasing the learning rate","Making the model smaller","Preventing the gradient from becoming so large it destabilizes training","Normalizing the data",2
-77,"What is differential privacy?","A way to speed up training","A regularization method","A technique that adds a little noise to data or gradients to protect individual users' private information","A type of optimizer",2
-78,"What is federated learning?","A data augmentation technique","Training a model across many users' devices without their raw data ever leaving their device","Training on one central server only","A type of ensemble method",1
-79,"What is YOLO used for?","Text generation","Sorting numbers","Detecting and locating objects in images in real time","Compressing files",2
-80,"What does A/B testing measure in AI products?","Number of model parameters","Which version of a product or model performs better with real users","The size of the dataset","The number of layers",1
-81,"What is permutation importance?","A dropout method","A way to measure how important each feature is by seeing how much accuracy drops when it's shuffled","A SHAP value method","A batch normalization trick",1
-82,"What is the kernel trick in SVMs?","A trick used in CNNs","A way to handle sequence data","A clever math trick that lets SVMs find complex decision boundaries without actually computing in high dimensions","A decision tree method",2
-83,"What is regularization used for?","Speeding up training","Increasing model size","Penalizing overly complex models to prevent overfitting","Normalizing input data only",2
-84,"What is catastrophic forgetting?","When a model forgets how many epochs it ran","When an AI model forgets how to do old tasks after being trained on new ones","When training data is deleted","When the model forgets to save",1
-85,"What is LIME used for?","Reducing model size","Visualizing data in 2D","Explaining why a specific prediction was made in a human-understandable way","Speeding up training",2
-86,"What is beam width in beam search?","The number of layers","How many candidate sequences the model keeps track of at each step while generating text","The batch size","The embedding size",1
-87,"What are Adapters and LoRA used for?","Removing attention layers","Efficiently fine-tuning large language models by adding only a few small trainable parameters","Training from scratch","Increasing batch size",1
-88,"What does MLE (Maximum Likelihood Estimation) mean?","Minimum Loss Estimation","Multi-Loss Ensemble","A statistical method for finding model parameters that make the training data most probable","Model Layer Encoding",2
-89,"What is top-k sampling?","Always picking the single most likely word","Randomly picking from only the k most likely next words when generating text","A regularization technique","A way to prune models",1
-90,"What is semantic segmentation?","Compressing an image","Classifying the whole image as one category","Drawing bounding boxes around objects","Labeling every single pixel in an image with its category (e.g., sky, road, person)",3
-91,"How do TPUs and GPUs help AI inference?","Better display quality","More storage","They perform AI calculations much faster than regular CPUs","Better internet speed",2
-92,"What is a hyperparameter?","A weight the model learns during training","A data point in the dataset","A metric like accuracy","A setting you choose before training starts, like learning rate or batch size",3
-93,"What is Bayesian Optimization for hyperparameter tuning?","Trying random combinations","Trying all combinations in a grid","A smart search method that uses past results to guess which settings to try next","Manually guessing settings",2
-94,"Why is class imbalance a problem in AI?","It means there are too many classes","It means there are no labels","If one class has far more examples than another, the model may just always predict the common class","All classes are equally sized",2
-95,"What is one-hot encoding?","A type of neural network","Representing a word as a long list of zeros with a single 1 in its position","A dense word embedding","A PCA method",1
-96,"What is a Seq2Seq model used for?","Image classification","Clustering data","Converting one sequence into another, like translating English to French","Object detection",2
-97,"What happens when you set temperature > 1 in text generation?","The output becomes more repetitive and predictable","The output becomes more random and creative","Nothing changes","The model stops generating",1
-98,"What is gradient boosting?","Training one very large tree","A random forest variant","Building trees one at a time where each new tree tries to fix the mistakes of the previous ones","A neural network technique",2
-99,"What is a validation set used for?","Training the model on more data","Replacing the test set","Checking how well the model is doing during development and tuning settings","Encrypting the dataset",2
-100,"What is federated learning designed to protect?","Model accuracy","Training speed","User privacy by keeping raw data on users' devices instead of sending it to a central server","GPU performance",2
+1,What does AI stand for?,Advanced Internet,Artificial Intelligence,Automated Input,,1
+2,Who is known as the Father of AI?,John McCarthy,Bill Gates,Elon Musk,,0
+3,What is the term for AI that can only do one specific task?,Strong AI,Narrow AI,Super AI,,1
+4,Which test determines if a machine can think like a human?,IQ Test,Turing Test,Stress Test,,1
+5,What is the most popular programming language for AI?,HTML,C++,Python,,2
+6,AI that could perform any intellectual task a human can is called:,AGI (General AI),Narrow AI,Reactive AI,,0
+7,What do we call the information used to teach an AI?,Training Data,Memory Chips,Software Updates,,0
+8,True or False: Most AI today (like Siri) is General AI.,True,False,Unknown,,1
+9,Which of these is a common use for AI?,Cooking a physical egg,Recommending movies,Hammering a nail,,1
+10,What is an Algorithm in AI?,A set of rules or instructions,A type of computer screen,A battery for robots,,0
+11,Which AI field mimics the human brain?,Robotics,Neural Networks,Cloud Computing,,1
+12,What is Machine Learning?,Machines fixing themselves,Computers learning from data,Building a PC,,1
+13,Learning with labeled data is called:,Supervised Learning,Unsupervised Learning,Random Learning,,0
+14,What is a Hidden Layer?,A layer in a neural network,A secret computer password,A physical part of a hard drive,,0
+15,What does NLP stand for?,Normal Logic Program,Natural Language Processing,Net Level Protocol,,1
+16,Which learning style uses rewards and penalties?,Reinforcement Learning,Supervised Learning,Deep Learning,,0
+17,What is Computer Vision?,AI interpreting images,Wearing VR goggles,Cleaning a monitor,,0
+18,Deep Learning is a subset of what?,Blockchain,Machine Learning,Web Design,,1
+19,What is Unsupervised Learning used for?,Finding hidden patterns,Following strict labels,Giving specific rewards,,0
+20,What is Big Data?,A heavy hard drive,Massive sets of information,A large computer case,,1
+21,What does Generative AI create?,New content like text and images,Electrical power,Physical hardware,,0
+22,What does LLM stand for?,Long Logic Machine,Large Language Model,Local Link Method,,1
+23,Who created ChatGPT?,Google,OpenAI,Meta,,1
+24,The text you give an AI to get a response is a:,Code,Prompt,Script,,1
+25,When AI makes up false information it is called:,Dreaming,Hallucinating,Buffering,,1
+26,What is the name of Google's AI?,Gemini,Alexa,Siri,,0
+27,What is a Chatbot?,A talking robot,A text-based AI conversationalist,A spam email,,1
+28,Which model is used to create images from text?,GPT-4,DALL-E,Excel,,1
+29,What are Tokens in AI?,Digital coins,Small units of text or words,Hardware keys,,1
+30,What is Multimodal AI?,AI that can use text and images,AI that works in many rooms,AI that has many batteries,,0
+31,What is AI Bias?,Unfair or skewed results,A fast internet connection,A type of computer virus,,0
+32,A fake video created by AI is called a:,Deepfake,Photoswap,AI-Movie,,0
+33,Which is an example of AI in everyday life?,FaceID on phones,Reading a paper book,Using a manual toothbrush,,0
+34,What is Predictive Text?,Guessing the next word you type,Reading your mind,Writing a whole book for you,,0
+35,The point where AI exceeds human intelligence is:,The Peak,The Singularity,The Endgame,,1
+36,What is an Autonomous vehicle?,A flying car,A self-driving car,A car that uses gas,,1
+37,Why is data privacy important in AI?,To protect personal info,To make AI run faster,To save battery life,,0
+38,Can AI feel real human emotions?,Yes,No,Only on weekends,,1
+39,AI used in medicine can help with:,Diagnosing diseases,Performing surgery alone,Paying medical bills,,0
+40,What is Prompt Engineering?,Building computer parts,Crafting better AI instructions,Fixing a broken screen,,1
