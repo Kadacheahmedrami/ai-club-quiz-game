@@ -1,0 +1,101 @@
+id,question,option_a,option_b,option_c,option_d,correct_answer_index
+1,"What does AI stand for?","Automated Interface","Algorithmic Integration","Adaptive Internet","Artificial Intelligence",3
+2,"Which language is currently most popular for ML prototyping?","Python","PHP","Ruby","Java",0
+3,"What is supervised learning?","Learning by clustering","Learning without labels","Learning from labeled examples","Learning from rewards",2
+4,"Which algorithm is commonly used for clustering?","K-Means","Logistic Regression","Decision Tree","SVM",0
+5,"What does NLP stand for?","Natural Language Processing","Neural Labeling Process","Network Learning Protocol","New Language Program",0
+6,"Which model architecture is commonly used for images?","Markov Model","CNN","RNN","Transformer",1
+7,"What is overfitting?","Model performs well on test but not train","Model memorizes training data and fails to generalize","Model performs poorly overall","Model uses too little data",1
+8,"Which loss is commonly used for classification problems?","L1 Loss","Hinge Loss only","Cross-Entropy Loss","Mean Squared Error",2
+9,"What is a feature in ML?","Loss value","Hyperparameter","Output label","Input variable used by the model",3
+10,"Which optimizer adapts learning rates per parameter?","Momentum only","Adam","SGD","Gradient Descent with constant LR",1
+11,"What does CNN stand for?","Cascaded Neural Network","Continuous Neural Network","Central Neural Node","Convolutional Neural Network",3
+12,"Which technique reduces model complexity by randomly disabling neurons?","Dropout","Data Augmentation","Pooling","BatchNorm",0
+13,"What is transfer learning?","Training from scratch always","Training two models together","Reusing a model trained on one task for another","Combining datasets",2
+14,"Which metric balances precision and recall?","MSE","F1 Score","Accuracy","ROC AUC",1
+15,"What does GPU do for training?","Replace CPU entirely","Increase disk space","Enable parallel computation for tensors","Serve web pages",2
+16,"Which is an example of unsupervised learning?","Logistic Regression","Supervised SVM","K-Means Clustering","Linear Regression",2
+17,"What is a confusion matrix used for?","Storing datasets","Hyperparameter tuning","Visualizing model weights","Summarizing classification results (TP/FP/TN/FN)",3
+18,"What is data augmentation?","Reducing dataset size","Collecting more labels","Changing model architecture","Generating new training examples by transforming existing ones",3
+19,"Which activation introduces sparsity and helps vanishing gradients less than sigmoid?","Tanh","Sigmoid","ReLU","Softmax",2
+20,"What is the purpose of batch normalization?","Normalize layer inputs to stabilize training","Add noise to inputs","Reduce dataset size","Encrypt model weights",0
+21,"Which algorithm is used for decision boundaries with margins?","SVM (Support Vector Machine)","KNN","PCA","K-Means",0
+22,"What does 'epoch' mean in training?","One update of a single parameter","One full pass through the training dataset","Number of features","Number of layers",1
+23,"What is early stopping?","Stopping data collection","Stopping model saving","Stopping training after one batch","Stopping when validation performance stops improving to avoid overfitting",3
+24,"Which method combines many weak learners into a strong one?","PCA","Ensemble methods (e.g., boosting)","Normalization","KNN",1
+25,"Which of these is a popular boosting algorithm?","PCA","Random Forest","KNN","XGBoost",3
+26,"What is word embedding?","A way to compress images","A type of optimizer","Mapping words to dense numerical vectors","Data normalization",2
+27,"Which model introduced the attention mechanism to NLP widely?","CNN","SVM","RNN","Transformer",3
+28,"What is 'tokenization' in NLP?","Splitting text into smaller units like words or subwords","Encrypting text","Compressing text","Normalizing numbers",0
+29,"What does 'precision' measure?","Loss value","Accuracy only","Proportion of true positives among actual positives","Proportion of true positives among predicted positives",3
+30,"Which technique reduces the number of features while keeping variance?","Overfitting","PCA (Principal Component Analysis)","Cross-Validation","Dropout",1
+31,"What is 'fine-tuning' a pre-trained model?","Adjusting a pre-trained model on a new dataset","Freezing the model forever","Retraining entire model from scratch","Converting model to ONNX only",0
+32,"Which search strategy explores many hyperparameter combinations randomly?","Grid Search","Random Search","Manual tuning","Bayesian Optimization always",1
+33,"What is 'zero-shot' learning?","Model that returns zeros","Model with zero parameters","Model generalizes to tasks it wasn't explicitly trained on","Model trained on zero data",2
+34,"Which concept describes distribution change after deployment?","Overfitting","Underfitting","Concept Drift","Vanishing Gradient",2
+35,"What is L1 regularization known for?","Encouraging sparse weights (feature selection)","Faster training always","Increasing model capacity","Encouraging dense weights",0
+36,"Which generative model uses a generator and a discriminator?","GAN (Generative Adversarial Network)","K-Means","SVM","Autoencoder",0
+37,"What is a diffusion model used for?","Clustering","Probabilistic generative modeling (image/audio generation)","Feature selection","Supervised classification only",1
+38,"What does 'self-supervised learning' do?","Creates supervisory signals from the data itself","Uses unlabeled data only for evaluation","Requires human labels for everything","Needs external rewards",0
+39,"Which algorithm is used for sequence data and has gating mechanisms?","PCA","K-Means","LSTM/GRU","CNN",2
+40,"What is beam search used for?","Decoding sequences in generation tasks keeping top-k candidates","Optimizing GPUs","Normalizing inputs","Data augmentation",0
+41,"What is 'temperature' in text generation?","A hardware metric","Number of tokens","Size of embedding","A parameter controlling randomness of predictions",3
+42,"What is top-p (nucleus) sampling?","Sample from smallest set of tokens whose cumulative probability ≥ p","Always choose top 1 token","Deterministic decoding","A regularization method",0
+43,"Which embedding method uses context to produce token vectors?","One-hot encoding","Contextual models like BERT/GPT","Bag-of-words only","Word2Vec static vectors",1
+44,"What is 'positional encoding' used for in transformers?","Normalize inputs","Compress weights","Encode output labels","Encode token positions since transformer has no recurrence",3
+45,"Which metric is useful for imbalanced classification?","Accuracy","F1 Score or ROC AUC","Number of epochs","Batch size",1
+46,"What does 'precision-recall tradeoff' refer to?","Between GPUs and CPUs","Increasing precision decreases recall and vice versa","Between loss and accuracy","Between two models only",1
+47,"What is 'pruning' a model?","Adding more layers","Removing weights/neurons to reduce size and improve latency","Encrypting model","Changing dataset",1
+48,"Which file format is commonly used for model interoperability?",".csv",".txt",".jpg",".onnx",3
+49,"What is 'quantization' in model deployment?","Reducing numeric precision to shrink model and speed inference","Encrypting data","Increasing precision","Adding more parameters",0
+50,"Which term describes exploration vs exploitation in RL?","Dropout-BatchNorm","Bias-Variance","Precision-Recall","Exploration-exploitation dilemma (e.g., epsilon-greedy)",3
+51,"What is Q-learning?","A supervised algorithm","A value-based reinforcement learning algorithm estimating Q-values","A clustering technique","A type of optimizer",1
+52,"What is a policy in reinforcement learning?","A mapping from states to actions","A dataset","Loss function","A metric",0
+53,"Which method approximates policy directly using gradients?","Policy Gradient methods","K-Means","Q-learning","PCA",0
+54,"What is 'actor-critic' in RL?","A hybrid RL architecture with actor (policy) and critic (value)","A visualization tool","A data cleaning method","Two-player game",0
+55,"Which technique helps interpret ML model predictions locally?","PCA","Data augmentation","LIME/SHAP","Dropout",2
+56,"What is 'explainability' in AI?","The ability to explain runtime errors","Faster training","Higher accuracy only","Understanding and communicating model decisions",3
+57,"Which framework is commonly used for deep learning in Python?","Spring","TensorFlow / PyTorch","Ruby on Rails","Laravel",1
+58,"What is ensemble averaging used for?","Increase learning rate","Normalize inputs","Decrease dataset size","Combine predictions from multiple models to reduce variance",3
+59,"Which technique is for dimensionality reduction preserving locality?","Dropout","BatchNorm","t-SNE / UMAP","PCA",2
+60,"What is 'backpropagation'?","A hyperparameter search","Forward pass only","Algorithm to compute gradients and update weights","A data collection method",2
+61,"Which problem is 'vanishing gradient' associated with?","Data augmentation","Deep networks with activations like sigmoid/tanh causing tiny gradients","GPU overheating","Too large batch size",1
+62,"What is 'transfer of learning' advantage?","Faster convergence and better performance with less data","Increases model size only","Requires more data","Always worse performance",0
+63,"Which algorithm is non-parametric and uses majority vote among neighbors?","Linear Regression","Decision Tree","K-Nearest Neighbors (KNN)","SVM",2
+64,"What is 'cross validation' used for?","Increase model size","Normalize labels","Estimate model performance reliably by splitting data into folds","Encrypt datasets",2
+65,"Which component of a transformer computes relationships between tokens?","Softmax only","Convolutional layer","Attention mechanism","Pooling layer",2
+66,"What is 'softmax' used for?","Regression output","Converting logits to probability distribution over classes","Data normalization","Loss calculation only",1
+67,"Which evaluation curve plots true positive rate vs false positive rate?","ROC curve","Learning curve","Precision-Recall curve","Loss curve",0
+68,"What is 'embedding dimension' referring to?","Batch size","Size of the vector representing tokens/objects","Number of classes","Number of epochs",1
+69,"Which is a subword tokenization method used by many LLMs?","Whitespace only","Lemmatization","Byte-Pair Encoding (BPE)","Stemming",2
+70,"What is 'few-shot' learning?","Training with millions of examples","Only for images","Adapting a model with only a few labeled examples","Zero labels always",2
+71,"Which method reduces model size by using lower-bit representations?","Quantization","Ensembling","BatchNorm","Dropout",0
+72,"What is 'model drift'?","More regularization needed","Model stops training","Model size increases","Model performance degrades over time due to data distribution changes",3
+73,"Which library is primarily used for scientific computing (arrays) in Python?","Pandas","NumPy","Express","Flask",1
+74,"What is 'epoch vs batch' difference?","Epoch = full dataset pass, batch = subset processed at once","Epoch is one batch, batch is full data","They are identical","Batch is number of epochs",0
+75,"Which algorithm uses decision trees averaged over many bootstrap samples?","SVM","Random Forest","Boosting","K-Means",1
+76,"What is 'gradient clipping' used for?","Increase learning rate","Reduce model size","Normalize features","Limit gradient norm to prevent exploding gradients",3
+77,"Which concept helps protect user data by adding noise to gradients?","Dropout","BatchNorm","Differential Privacy","L1 regularization",2
+78,"What is 'federated learning'?","Data augmentation technique","Training models across many client devices without centralizing raw data","Distributed GPU training with same data","Centralized training only",1
+79,"Which algorithm is used for object detection in images (one popular family)?","YOLO (You Only Look Once)","Naive Bayes","KNN","PCA",0
+80,"What does 'A/B testing' measure in ML-backed products?","Number of parameters","Which variant yields better user/metric results","Dataset size","Model architecture",1
+81,"Which method finds feature importance by permuting feature values?","Dropout","SHAP only","Permutation importance","BatchNorm",2
+82,"What is 'kernel trick' associated with?","K-Means","SVMs to operate in high-dimensional space implicitly","Neural Networks","Decision Trees",1
+83,"Which technique prevents overfitting by adding penalty on large weights?","Regularization (L1/L2)","BatchNorm only","Dropout only","Data Augmentation",0
+84,"What is 'catastrophic forgetting' in continual learning?","Model forgets epoch count","Model forgets labels","Model forgets old tasks when trained on new ones","Model forgets training data physically",2
+85,"Which is an explainability tool that attributes feature contributions?","LIME","t-SNE","Dropout","K-Means",0
+86,"What is 'beam width' in beam search?","Number of layers","Number of beams kept at each decoding step","Batch size","Embedding size",1
+87,"Which approach is used for language model fine-tuning with very few new parameters (efficient tuning)?","Remove attention","Increase batch size only","Full fine-tuning always","Adapters / LoRA",3
+88,"What does 'MLE' stand for in probabilistic modeling?","Model Layer Encoding","Minimum Loss Estimation","Multi-Loss Ensemble","Maximum Likelihood Estimation",3
+89,"Which sampling method restricts to top-k tokens before sampling?","Top-k","Temperature only","Top-p","Greedy only",0
+90,"What is 'semantic segmentation' in CV?","Classify entire image","Compress images","Detect objects with bounding boxes only","Label each pixel with a class",3
+91,"Which technique speeds up inference by running models on specialized hardware?","Using accelerators like TPU / GPU / NPU","Using web servers","Using more RAM only","Using more CPUs only",0
+92,"What is 'hyperparameter'?","A learnable weight","A metric","A data point","A configuration parameter set before training (e.g., lr, batch size)",3
+93,"Which method tunes hyperparameters using a model of the objective function?","Random Search","Manual try-and-error","Grid Search","Bayesian Optimization",3
+94,"What is 'class imbalance' and why problematic?","All classes equal","Too many classes always","No labels present","Some classes have far fewer examples causing biased models",3
+95,"Which token representation is simplest and high-dimensional but sparse?","Word2Vec","PCA of words","BERT embedding","One-hot encoding",3
+96,"Which model type is designed for sequence-to-sequence tasks like translation?","PCA","KNN","Seq2Seq models with encoder-decoder architectures","CNN only",2
+97,"What is 'sampling temperature' effect when >1 ?","Makes distribution flatter (more random)","Removes tokens","Always deterministic","Makes distribution sharper (less random)",0
+98,"Which technique uses ensemble of trees trained sequentially to correct previous errors?","SVM","Random Forest","Gradient Boosting (e.g., XGBoost)","K-Means",2
+99,"What is the role of a validation set?","Train the model","Tune hyperparameters and estimate generalization during development","Replace test set forever","Encrypt data",1
+100,"Which privacy-preserving technique trains with gradients aggregated on device and only updates model server-side?","Batch Normalization","Centralized training","Data Duplication","Federated Learning",3
