@@ -2,12 +2,18 @@
 
 import { Button } from '@/components/ui/button'
 import { PlayIcon } from 'lucide-react'
+import { clearQuizState } from '@/lib/quiz-storage'
 
 interface WelcomeScreenProps {
   onStartQuiz: () => void
 }
 
 export default function WelcomeScreen({ onStartQuiz }: WelcomeScreenProps) {
+  const handleStartQuiz = () => {
+    // Clear localStorage before starting the quiz
+    clearQuizState();
+    onStartQuiz();
+  }
   return (
     <div className="min-h-screen flex flex-col items-center justify-center -translate-y-5 px-4">
       {/* Logo Section */}
@@ -40,7 +46,7 @@ export default function WelcomeScreen({ onStartQuiz }: WelcomeScreenProps) {
               Test your knowledge about Artificial Intelligence
             </p>
             <p className="text-cyan-400 text-sm">
-              40 questions • 20 seconds each • 1 chance only
+              40 questions • 30 seconds each • 1 chance only
             </p>
           </div>
 
@@ -62,7 +68,7 @@ export default function WelcomeScreen({ onStartQuiz }: WelcomeScreenProps) {
 
           {/* Start Button */}
           <Button
-            onClick={onStartQuiz}
+            onClick={handleStartQuiz}
             className="w-full py-6 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-slate-950 font-bold text-lg rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shadow-lg"
           >
             <PlayIcon size={24} />

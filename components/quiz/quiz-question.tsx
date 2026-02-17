@@ -45,9 +45,9 @@ export default function QuizQuestion({
   useEffect(() => {
     // Reset the timer ended flag when the question changes
     timerEndedRef.current = false;
-    
+
     // Calculate the actual remaining time based on saved state
-    let initialTimeRemaining = 20; // Default 20 seconds
+    let initialTimeRemaining = 30; // Default 30 seconds
     const currentTime = Date.now();
 
     // If we have saved timer state, calculate the actual remaining time
@@ -122,7 +122,7 @@ export default function QuizQuestion({
 
   // Calculate time percentage based on actual elapsed time for smoother animation
   const elapsed = (Date.now() - startTime) / 1000;
-  const timePercentage = Math.max(0, (rawTimeLeft / 20) * 100) // Always calculate based on 20 seconds per question
+  const timePercentage = Math.max(0, (rawTimeLeft / 30) * 100) // Always calculate based on 30 seconds per question
 
   // Determine if time is running low for styling
   const isTimeLow = rawTimeLeft <= 5;
