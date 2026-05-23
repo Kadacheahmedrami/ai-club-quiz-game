@@ -40,13 +40,13 @@ export default function WelcomeScreen({ onStartQuiz }: WelcomeScreenProps) {
         <div className="bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-xl border border-cyan-500/30 rounded-2xl p-8 shadow-2xl">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-white mb-3">
-              Welcome to SOA Club!
+              Welcome to SOA Quiz!
             </h2>
             <p className="text-gray-300 mb-2">
-              Test your knowledge about Artificial Intelligence
+              Test your knowledge about Algeria
             </p>
             <p className="text-cyan-400 text-sm">
-              40 questions • 30 seconds each • 1 chance only
+              50 questions • 30 seconds each • 1 chance only
             </p>
           </div>
 
@@ -54,7 +54,7 @@ export default function WelcomeScreen({ onStartQuiz }: WelcomeScreenProps) {
           <div className="space-y-3 mb-8">
             <div className="flex items-start gap-3">
               <span className="text-cyan-400 mt-1">✦</span>
-              <p className="text-gray-300">Challenge yourself with AI questions</p>
+              <p className="text-gray-300">Challenge yourself with Algeria questions</p>
             </div>
             <div className="flex items-start gap-3">
               <span className="text-cyan-400 mt-1">✦</span>
@@ -62,7 +62,7 @@ export default function WelcomeScreen({ onStartQuiz }: WelcomeScreenProps) {
             </div>
             <div className="flex items-start gap-3">
               <span className="text-cyan-400 mt-1">✦</span>
-              <p className="text-gray-300">Join our AI learning community</p>
+              <p className="text-gray-300">Learn about Algerian heritage</p>
             </div>
           </div>
 

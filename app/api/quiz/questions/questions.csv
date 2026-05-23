@@ -1,41 +1,51 @@
 id,question,option_a,option_b,option_c,option_d,correct_answer_index
-1,What does AI stand for?,Advanced Internet,Artificial Intelligence,Automated Input,Algorithmic Interface,1
-2,Who is known as the Father of AI?,Bill Gates,Elon Musk,John McCarthy,Steve Jobs,2
-3,What is the term for AI that can only do one specific task?,Super AI,General AI,Strong AI,Narrow AI,3
-4,Which test determines if a machine can think like a human?,Stress Test,IQ Test,Speed Test,Turing Test,3
-5,What is the most popular programming language for AI?,HTML,Java,C++,Python,3
-6,AI that could perform any intellectual task a human can is called:,Narrow AI,Reactive AI,Super AI,AGI (General AI),3
-7,What do we call the information used to teach an AI?,Software Updates,Memory Chips,Hardware Drivers,Training Data,3
-8,True or False: Most AI today like Siri is General AI.,Definitely True,Sometimes True,Unknown,False,3
-9,Which of these is a common use for AI?,Hammering a nail,Cooking a physical egg,Watering plants,Recommending movies,3
-10,What is an Algorithm in AI?,A battery for robots,A type of computer screen,A hardware component,A set of rules or instructions,3
-11,Which AI field mimics the human brain?,Cloud Computing,Robotics,Cybersecurity,Neural Networks,3
-12,What is Machine Learning?,Building a PC,Machines fixing themselves,Installing software,Computers learning from data,3
-13,Learning with labeled data is called:,Random Learning,Deep Learning,Unsupervised Learning,Supervised Learning,3
-14,What is a Hidden Layer?,A physical part of a hard drive,A secret computer password,A type of storage,A layer inside a neural network,3
-15,What does NLP stand for?,Net Level Protocol,Normal Logic Program,New Learning Process,Natural Language Processing,3
-16,Which learning style uses rewards and penalties?,Deep Learning,Supervised Learning,Unsupervised Learning,Reinforcement Learning,3
-17,What is Computer Vision?,Cleaning a monitor,Wearing VR goggles,Adjusting screen brightness,AI interpreting and understanding images,3
-18,Deep Learning is a subset of what?,Web Design,Blockchain,Cybersecurity,Machine Learning,3
-19,What is Unsupervised Learning used for?,Giving specific rewards,Following strict labels,Memorizing answers,Finding hidden patterns in data,3
-20,What is Big Data?,A large computer case,A heavy hard drive,A big monitor screen,Massive sets of information too big for normal tools,3
-21,What does Generative AI create?,Physical hardware,Electrical power,Internet connections,New content like text and images,3
-22,What does LLM stand for?,Local Link Method,Low Level Memory,Long Logic Machine,Large Language Model,3
-23,Who created ChatGPT?,Apple,Meta,Google,OpenAI,3
-24,The text you give an AI to get a response is called a:,Script,Command,Code,Prompt,3
-25,When AI confidently makes up false information it is called:,Buffering,Crashing,Dreaming,Hallucinating,3
-26,What is the name of Google's AI assistant?,Siri,Cortana,Alexa,Gemini,3
-27,What is a Chatbot?,A spam email,A physical robot,A search engine,A text-based AI you can have a conversation with,3
-28,Which AI model is used to create images from text?,Excel,Word,GPT-4,DALL-E,3
-29,What are Tokens in AI?,Hardware keys,Digital coins,Encryption codes,Small units of text like words or parts of words,3
-30,What is Multimodal AI?,AI that has many batteries,AI that works in many rooms,AI that speaks many languages,AI that can process both text and images,3
-31,What is AI Bias?,A type of computer virus,A fast internet connection,A programming error,When AI produces unfair or skewed results due to bad training data,3
-32,A fake video of a real person created by AI is called a:,AI-Movie,Photoswap,Viral Video,Deepfake,3
-33,Which is an example of AI in everyday life?,Using a manual toothbrush,Reading a paper book,Writing with a pen,FaceID unlocking your phone,3
-34,What is Predictive Text?,Writing a whole book for you,Correcting your grammar,Reading your mind,Guessing the next word you are about to type,3
-35,The point where AI exceeds human intelligence is called:,The Endgame,The Breakthrough,The Peak,The Singularity,3
-36,What is an Autonomous vehicle?,A car that uses only gas,A very fast car,A flying car,A self-driving car powered by AI,3
-37,Why is data privacy important in AI?,To save battery life,To make AI run faster,To improve graphics,To protect people's personal information,3
-38,Can AI feel real human emotions?,Only negative ones,Only happiness,Yes completely,No,3
-39,AI used in medicine can help with:,Paying medical bills,Performing surgery completely alone,Replacing all doctors,Diagnosing diseases faster and more accurately,3
-40,What is Prompt Engineering?,Fixing a broken screen,Building computer hardware,Writing code,Crafting better instructions to get the best responses from an AI,3
+1,"The historic Soummam Conference, which was crucial in organizing the FLN and the ALN during the revolution, took place in what year?","1837","1955","1956","1958",2
+2,"The Treaty of Tafna, a significant peace agreement temporarily halting hostilities, was signed between Emir Abdelkader and the French army in what year?","1832","1837","1844","1847",1
+3,"We all know Mount Tahat is the highest point in Algeria, but what is the lowest geographical point in the country?","Sebkha of Oran","Chott el Hodna","Chott Melrhir","Guelma Valley",2
+4,"On a global scale, which country has the longest coastline in the world?","Russia","Australia","Indonesia","Canada",3
+5,"Algeria has a proud history at the Olympics. Who won Algeria's first-ever Olympic Gold medal in 1992?","Noureddine Morceli","Hassiba Boulmerka","Taoufik Makhloufi","Hocine Soltani",1
+6,"The classical Andalusian music of Algeria has different regional schools. The specific style originating from the city of Constantine is known as what?","San'a","Gharnati","Malouf","Hawzi",1
+7,"Which incredible Algerian film made history by winning the prestigious Palme d'Or at the Cannes Film Festival in 1975?","The Battle of Algiers","Chronicle of the Years of Fire","Omar Gatlato","Inspecteur Tahar's Holiday",1
+8,"In 2020, which movie made history by becoming the first non-English language film to win the Academy Award (Oscar) for Best Picture?","Roma","Parasite","Amelie","Crouching Tiger, Hidden Dragon",1
+9,"At what exact temperature do the Celsius and Fahrenheit scales intersect and read the exact same number?","-40 degrees","0 degrees","-32 degrees","-273 degrees (Absolute Zero)",0
+10,"Which organ in the human body is primarily responsible for producing the hormone insulin?","Liver","Kidneys","Pancreas","Gallbladder",2
+11,"Who was the iconic female leader of the Algerian resistance against the French in the Kabylia region during the 1850s?","Djamila Bouhired","Lalla Fatma N'Soumer","Hassiba Ben Bouali","Zohra Drif",1
+12,"Alongside Liberia, which African nation is famous for never having been formally colonized by a European power?","Egypt","Morocco","Ethiopia","Ghana",2
+13,"What is the name of the vast, mountainous plateau in southern Algeria that is world-famous for its prehistoric rock art?","Ahaggar National Park","Tassili n'Ajjer","M'zab Valley","Hoggar Mountains",1
+14,"What is the capital city of Australia?","Sydney","Melbourne","Canberra","Brisbane",2
+15,"Which Algerian football club was the first Algerian team to win the CAF Champions League (formerly African Cup of Champions Clubs)?","MC Alger","JS Kabylie","USM Alger","CR Belouizdad",1
+16,"The traditional wrestling sport of northern Africa, particularly popular in the Aurès region, is known by what name?","Tahteches","Kabaddi","Sumo","Greco-Roman",0
+17,"What is the name of the traditional, beautifully embroidered dress worn by women in the Chaouia region?","Chedda","Melhfa (El-Haf)","Karakou","Blouza",1
+18,"The legendary warrior queen who united the tribes of the Aurès to resist the Umayyad expansion in the 7th century is known as La Kahina. What was her Berber name?","Tin Hinan","Lalla Khedidja","Dihya","Fatima",2
+19,"What does the famous Algerian folk dance 'Rahaba' originate from?","Kabylia","The Aurès","Sahara Desert","Algiers",1
+20,"Which ancient Numidian king famously united much of modern-day northern Algeria and is known for his alliance with Rome?","Syphax","Jugurtha","Massinissa","Juba I",2
+21,"The ancient kingdom of Numidia, covering much of modern-day northern Algeria, was famously united by which legendary king?","Syphax","Jugurtha","Massinissa","Juba I",2
+22,"While the lyrics to the Algerian national anthem 'Kassaman' were written by Moufdi Zakaria, who composed the final music for it?","Warda Al-Jazairia","Mohamed Fawzi","Ahmed Wahby","Haroun Tazieff",2
+23,"The French Revolution, which completely changed the course of European history, began in what year?","1776","1789","1799","1812",1
+24,"Who was the first female Prime Minister of the United Kingdom, often referred to as the 'Iron Lady'?","Theresa May","Queen Victoria","Margaret Thatcher","Angela Merkel",2
+25,"Which beautiful Algerian city, known for its white buildings and Mediterranean charm, is also the capital of the Boumerdès province?","Bejaia","Dellys","Tizi-Ouzou","Béjaïa",1
+26,"The UNESCO World Heritage Site of the 'M'zab Valley' features a fortified settlement known as a 'ksar'. In which province is it located?","Ghardaia","Ouargla","Biskra","El Oued",0
+27,"Which Algerian independence hero was famously known as the 'Father of the Revolution' and came from the Aurès region?","Larbi Ben M'hidi","Mostefa Ben Boulaïd","Abane Ramdane","Krim Belkacem",1
+28,"Who is the legendary old-school singer from the Aurès known for his incredibly powerful voice who popularized Chaouia heritage across Algeria?","Katchou","Aissa Djarmouni","Hamid Belbeche","El Hadj M'hamed El Anka",0
+29,"The famous, breathtaking Ghoufi Canyons (Balcons de Ghoufi), a major historic and natural tourist attraction, are located in which region of Algeria?","Kabylia","The Aurès","Hoggar","M'zab Valley",1
+30,"What is the name of the traditional, beautifully embroidered dress worn by women in the Chaouia region?","Chedda","Melhfa (El-Haf)","Karakou","Blouza",3
+31,"The famous Algerian dish 'Couscous' is traditionally served with which meat most commonly?","Chicken","Lamb","Beef","Fish",1
+32,"What is the main ingredient in the traditional Algerian soup 'Harira'?","Potatoes","Tomatoes and lentils","Spinach","Carrots",1
+33,"The 'Fleur d'Oranger' (Orange Blossom) is a key ingredient in which famous Algerian pastry?","Makrout","Baklawa","Cornes de Gazelle","Tamina",1
+34,"Which city is famous for its annual almond blossom festival in Algeria?","Tlemcen","Constantine","Annaba","Oran",3
+35,"What is the traditional headscarf worn by women in Kabylia called?","Melhfa","Aagyal","Azetta","Safsari",3
+36,"The famous 'Tassili n'Ajjer' rock art sites are located in which part of the Sahara Desert?","Western Sahara","Northern Sahara (Algeria)","Central Sahara (Mali)","Eastern Sahara",1
+37,"Which mountain range runs through northern Algeria, separating the Mediterranean coast from the Sahara Desert?","Sahara Mountains","Atlas Mountains","Hoggar Mountains","Aïr Mountains",1
+38,"What is the name of the famous Date Palm grove area in Algeria, often called the 'Pearl of the Sahara'?","Ghardaia","Biskra","El Oued","Zibans",3
+39,"Which city is known as the 'City of Roses' due to its famous rose Festival in Algeria?","Algiers","Oran","Constantine","Khenchela",3
+40,"The ancient Roman city of 'Timgad' (Trajan's City), a UNESCO World Heritage Site, is located near which modern Algerian city?","Biskra","Batna","Khenchela","Tebessa",1
+41,"Which heroic figure of the Algerian Revolution is proudly known as the 'Father of the Revolution' and comes from the Aurès region?","Larbi Ben M'hidi","Mostefa Ben Boulaïd","Abane Ramdane","Krim Belkacem",1
+42,"Who is the legendary old-school singer from the Aurès known for his incredibly powerful voice who popularized Chaouia heritage across Algeria?","Katchou","Aissa Djarmouni","Hamid Belbeche","El Hadj M'hamed El Anka",0
+43,"The famous, breathtaking Ghoufi Canyons (Balcons de Ghoufi), a major historic and natural tourist attraction, are located in which region of Algeria?","Kabylia","The Aurès","Hoggar","M'zab Valley",1
+44,"What is the name of the traditional, beautifully embroidered dress worn by women in the Chaouia region?","Chedda","Melhfa (El-Haf)","Karakou","Blouza",3
+45,"What was the actual Berber name of 'La Kahina,' the legendary 7th-century warrior queen who united the tribes of the Aurès to resist the Umayyad expansion?","Tin Hinan","Lalla Khedidja","Dihya","Fatima",2
+46,"Which historic treaty signed in 1830 marked the beginning of the French colonization of Algeria?","Treaty of Tafna","Treaty of Algiers","Treaty of Paris","Treaty of Bardo",1
+47,"The famous Algerian painter who co-founded the 'Violence' group and is known internationally is...","Mohamed Aksas","Mohamed Dib","Mohamed Racim","Abdallah Benanteur",3
+48,"Which UNESCO World Heritage Site in Algeria was built by the Mozabites and features a unique pentagonal architecture?","Kasbah of Algiers","M'zab Valley fortified cities","Tassili n'Ajjer","Djémila",1
+49,"The 'Casbah' of Algiers, a UNESCO World Heritage Site, is known for its unique Mediterranean and Ottoman architecture. What does 'Casbah' mean in Arabic?","Old City","White City","Fortress","Palace",2
+50,"Which Algerian independence movement party was founded in 1954 and led the fight for independence from France?","MTLD","FLN","PCA","UGA",1
