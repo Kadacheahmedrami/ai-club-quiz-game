@@ -59,7 +59,7 @@ export async function GET(request: NextRequest) {
       questions = shuffled.slice(0, 3);
     } else {
       // Randomly select 40 questions from the full set
-      questions = getRandomQuestions(questionsForClient, 40);
+      questions = getRandomQuestions(questionsForClient, 50);
     }
 
     // Encrypt the questions before sending
